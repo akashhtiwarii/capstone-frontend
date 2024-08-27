@@ -6,24 +6,27 @@ import Popup from '../Popup';
 import FormInput from '../FormInput';
 import FormSelect from '../FormSelect';
 import { signupValidationSchema } from '../utils/validationSchema';
-import CryptoJS from 'crypto-js';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = ({ onSignup }) => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(signupValidationSchema),
   });
   const [popupMessage, setPopupMessage] = React.useState('');
-
+  const navigate = useNavigate();
   const onSubmit = async (data) => {
     try {
       const encryptedPassword = btoa(data.password);
       const requestData = { ...data, password: encryptedPassword };
       const response = await axios.post('http://localhost:8081/user/register', requestData);
       onSignup(response.data);
-      setPopupMessage('Signup successful!');
+      setPopupMessage(response.data);
+      setTimeout(() => {
+        navigate('/login');
+      }, 500);
     } catch (error) {
       if (error.response && error.response.data) {
-        setPopupMessage(error.response.data || 'Signup failed! Please try again.');
+        setPopupMessage( 'Signup failed! Please try again.');
       } else {
         setPopupMessage('Signup failed! Please check your connection.');
       }
@@ -51,7 +54,6 @@ const Signup = ({ onSignup }) => {
           errors={errors}
         />
         <FormInput label="Phone" type="text" register={register} name="phone" errors={errors} />
-        <FormInput label="Address" type="text" register={register} name="address" errors={errors} />
         <button type="submit" className="btn btn-primary">Sign Up</button>
       </form>
       <Popup message={popupMessage} onClose={closePopup} />

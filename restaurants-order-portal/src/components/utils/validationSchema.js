@@ -13,6 +13,7 @@ export const loginValidationSchema = yup.object().shape({
 export const signupValidationSchema = yup.object().shape({
   name: yup
     .string()
+    .matches(/^[A-Za-z\s]+$/, 'Name can only contain letters and spaces')
     .required('Name is mandatory'),
   email: yup
     .string()
@@ -33,9 +34,6 @@ export const signupValidationSchema = yup.object().shape({
     .string()
     .matches(/^\d{10}$/, 'Phone number should be valid')
     .required('Phone number is mandatory'),
-  address: yup
-    .string()
-    .required('Address is mandatory'),
   role: yup
     .string()
     .oneOf(['USER', 'OWNER'], 'Role is mandatory')

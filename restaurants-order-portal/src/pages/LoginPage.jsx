@@ -3,7 +3,6 @@ import Login from '../components/Auth/Login';
 
 const LoginPage = () => {
   const handleLogin = (data) => {
-    console.log('Login data:', data);
   };
 
   return (

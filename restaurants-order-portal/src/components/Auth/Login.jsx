@@ -5,22 +5,39 @@ import axios from 'axios';
 import Popup from '../Popup';
 import FormInput from '../FormInput';
 import { loginValidationSchema } from '../utils/validationSchema';
-import bcrypt from 'bcryptjs';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const Login = ({ onLogin }) => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(loginValidationSchema),
   });
   const [popupMessage, setPopupMessage] = React.useState('');
-
+  const navigate = useNavigate();
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
   const onSubmit = async (data) => {
     try {
       const encryptedPassword = btoa(data.password);
       const requestData = { ...data, password: encryptedPassword };
       const response = await axios.post('http://localhost:8081/user/login', requestData);
-      const { message } = response.data;
+      const { userId, email, name, phone, role, message } = response.data;
+      localStorage.setItem('user', JSON.stringify({
+        userId,
+        email,
+        name,
+        phone,
+        role,
+      }));
       onLogin(response.data);
       setPopupMessage(message || 'Login successful!');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
     } catch (error) {
       if (error.response && error.response.data) {
         const { message } = error.response.data;
