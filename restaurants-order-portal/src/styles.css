@@ -59,6 +59,12 @@ body {
     background-color: #0056b3;
   }
   
+  .invalid-feedback {
+    color: red;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
   @media (max-width: 600px) {
     .form-container {
       width: 90%;
