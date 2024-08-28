@@ -1,17 +1,14 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
 import Popup from '../Popup';
 import FormInput from '../FormInput';
-import { loginValidationSchema } from '../utils/validationSchema';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { validateLogin } from '../utils/validationSchema';
 
 const Login = ({ onLogin }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(loginValidationSchema),
-  });
+  const { register, handleSubmit, setError, formState: { errors } } = useForm();
   const [popupMessage, setPopupMessage] = React.useState('');
   const navigate = useNavigate();
   useEffect(() => {
@@ -21,6 +18,14 @@ const Login = ({ onLogin }) => {
     }
   }, [navigate]);
   const onSubmit = async (data) => {
+    const validationErrors = validateLogin(data);
+    if (Object.keys(validationErrors).length > 0) {
+      Object.entries(validationErrors).forEach(([field, message]) => {
+        setError(field, { type: 'manual', message });
+      });
+      return;
+    }
+
     try {
       const encryptedPassword = btoa(data.password);
       const requestData = { ...data, password: encryptedPassword };

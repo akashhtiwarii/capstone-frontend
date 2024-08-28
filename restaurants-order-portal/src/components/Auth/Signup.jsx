@@ -1,23 +1,28 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
 import axios from 'axios';
 import Popup from '../Popup';
 import FormInput from '../FormInput';
 import FormSelect from '../FormSelect';
-import { signupValidationSchema } from '../utils/validationSchema';
 import { useNavigate } from 'react-router-dom';
+import { validateSignup } from '../utils/validationSchema';
 
 const Signup = ({ onSignup }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(signupValidationSchema),
-  });
+  const { register, handleSubmit, setError, formState: { errors } } = useForm();
   const [popupMessage, setPopupMessage] = React.useState('');
   const navigate = useNavigate();
   const onSubmit = async (data) => {
+    const validationErrors = validateSignup(data);
+    if (Object.keys(validationErrors).length > 0) {
+      Object.entries(validationErrors).forEach(([field, message]) => {
+        setError(field, { type: 'manual', message });
+      });
+      return;
+    }
     try {
       const encryptedPassword = btoa(data.password);
-      const requestData = { ...data, password: encryptedPassword };
+      const { confirmPassword, ...restData } = data;
+      const requestData = { ...restData, password: encryptedPassword };
       const response = await axios.post('http://localhost:8081/user/register', requestData);
       onSignup(response.data);
       setPopupMessage(response.data);
