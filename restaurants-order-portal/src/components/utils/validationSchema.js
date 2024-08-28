@@ -3,7 +3,7 @@ export const validateSignup = (data) => {
   if (!/^[A-Za-z\s]+$/.test(data.name)) {
     errors.name = 'Name can only contain letters and spaces';
   }
-  if (!/^\S+@\S+\.\S+$/.test(data.email)) {
+  if (!/^\S+@gmail\.com$/.test(data.email)) {
     errors.email = 'Valid email required';
   }
   if (data.password.length < 8 || !/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}$/.test(data.password)) {
@@ -12,7 +12,7 @@ export const validateSignup = (data) => {
   if (data.password !== data.confirmPassword) {
     errors.confirmPassword = 'Passwords must match';
   }
-  if (!/^\d{10}$/.test(data.phone)) {
+  if (!/^[9876]\d{9}$/.test(data.phone)) {
     errors.phone = 'Phone number should be valid';
   }
   if (!['USER', 'OWNER'].includes(data.role)) {
