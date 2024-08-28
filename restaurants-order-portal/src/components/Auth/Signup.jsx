@@ -1,11 +1,11 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import Popup from '../Popup';
 import FormInput from '../FormInput';
 import FormSelect from '../FormSelect';
 import { useNavigate } from 'react-router-dom';
 import { validateSignup } from '../utils/validationSchema';
+import { registerUser } from '../../services/apiService';
 
 const Signup = ({ onSignup }) => {
   const { register, handleSubmit, setError, formState: { errors } } = useForm();
@@ -23,14 +23,14 @@ const Signup = ({ onSignup }) => {
       const encryptedPassword = btoa(data.password);
       const { confirmPassword, ...restData } = data;
       const requestData = { ...restData, password: encryptedPassword };
-      const response = await axios.post('http://localhost:8081/user/register', requestData);
-      onSignup(response.data);
-      setPopupMessage(response.data);
+      const response = await registerUser(requestData);
+      onSignup(response);
+      setPopupMessage(response);
       setTimeout(() => {
         navigate('/login');
       }, 500);
     } catch (error) {
-      if (error.response && error.response.data) {
+      if (error.response.data && error.response.data) {
         setPopupMessage( 'Signup failed! Please try again.');
       } else {
         setPopupMessage('Signup failed! Please check your connection.');

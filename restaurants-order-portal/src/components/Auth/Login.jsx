@@ -1,11 +1,11 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import Popup from '../Popup';
 import FormInput from '../FormInput';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { validateLogin } from '../utils/validationSchema';
+import { loginUser } from '../../services/apiService';
 
 const Login = ({ onLogin }) => {
   const { register, handleSubmit, setError, formState: { errors } } = useForm();
@@ -29,8 +29,8 @@ const Login = ({ onLogin }) => {
     try {
       const encryptedPassword = btoa(data.password);
       const requestData = { ...data, password: encryptedPassword };
-      const response = await axios.post('http://localhost:8081/user/login', requestData);
-      const { userId, email, name, phone, role, message } = response.data;
+      const response = await loginUser(requestData);
+      const { userId, email, name, phone, role, message } = response;
       localStorage.setItem('user', JSON.stringify({
         userId,
         email,
@@ -38,7 +38,7 @@ const Login = ({ onLogin }) => {
         phone,
         role,
       }));
-      onLogin(response.data);
+      onLogin(response);
       setPopupMessage(message || 'Login successful!');
       setTimeout(() => {
         navigate('/dashboard');
@@ -48,6 +48,7 @@ const Login = ({ onLogin }) => {
         const { message } = error.response.data;
         setPopupMessage(message || 'Login failed! Please try again.');
       } else {
+        console.log(error);
         setPopupMessage('Login failed! Please check your connection.');
       }
     }
