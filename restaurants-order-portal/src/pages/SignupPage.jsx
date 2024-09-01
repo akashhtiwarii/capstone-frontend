@@ -1,5 +1,6 @@
 import React from 'react';
 import Signup from '../components/Auth/Signup';
+import '../styles.css';
 
 const SignupPage = () => {
   const handleSignup = (data) => {

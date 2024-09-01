@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8081/user';
+const USER_API_URL = 'http://localhost:8081/user';
+const RESTAURANT_API_URL = 'http://localhost:8080';
 
 export const registerUser = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/register`, userData);
+    const response = await axios.post(`${USER_API_URL}/register`, userData);
     return response.data;
   } catch (error) {
     throw error;
@@ -13,9 +14,19 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, userData);
+    const response = await axios.post(`${USER_API_URL}/login`, userData);
     return response.data;
   } catch (error) {
     throw error;
+  }
+};
+
+export const getAllRestaurants = async () => {
+  try {
+    const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/all`);
+    return response.data;
+  } catch (err) {
+    console.error('Error fetching restaurants:', err);
+    throw err;
   }
 };

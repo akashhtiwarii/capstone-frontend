@@ -1,0 +1,37 @@
+.owner-dashboard {
+    padding: 40px;
+    background-color: #f5f5f5;
+    min-height: calc(100vh - 70px);
+  }
+  
+  .owner-dashboard h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #2c3e50;
+  }
+  
+  .dashboard-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .dashboard-section {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .dashboard-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .dashboard-section h2 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #2c3e50;
+  }
+  
