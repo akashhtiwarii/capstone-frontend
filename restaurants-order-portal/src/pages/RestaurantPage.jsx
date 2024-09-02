@@ -15,7 +15,7 @@ const RestaurantPage = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
-        const data = await getAllRestaurants(); // Use the service function
+        const data = await getAllRestaurants(); 
         setRestaurants(data);
         setLoading(false);
       } catch (err) {
