@@ -21,12 +21,20 @@ export const loginUser = async (userData) => {
   }
 };
 
+export const getRestaurantsByOwner = async (ownerId) => {
+  try {
+    const response = await axios.post(`${RESTAURANT_API_URL}/restaurant/owner`, { ownerId });
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const getAllRestaurants = async () => {
   try {
     const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/all`);
     return response.data;
   } catch (err) {
-    console.error('Error fetching restaurants:', err);
     throw err;
   }
 };

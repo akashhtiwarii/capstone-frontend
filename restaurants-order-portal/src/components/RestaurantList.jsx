@@ -7,7 +7,7 @@ const RestaurantList = ({ restaurants, defaultImage }) => {
       {restaurants.map((restaurant) => (
         <div key={restaurant.restaurantId} className="restaurant-card">
           <img
-            src={restaurant.image ? restaurant.image : defaultImage}
+            src={restaurant.image ? `data:image/jpeg;base64,${restaurant.image}` : defaultImage}
             alt={restaurant.name}
             className="restaurant-image"
           />
