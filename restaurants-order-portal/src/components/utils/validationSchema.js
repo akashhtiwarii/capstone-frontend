@@ -54,3 +54,20 @@ export const validateRestaurant = (data) => {
   return errors;
 };
 
+export const validateFoodItem = (data) => {
+  const errors = {};
+
+  if (!data.name || data.name.trim() === '') {
+    errors.name = 'Valid Name required';
+  }
+
+  if (!data.price || data.price <= 0) {
+    errors.price = 'Valid Price required';
+  }
+
+  if (!data.categoryId || data.categoryId < 1) {
+    errors.categoryId = 'Valid Category ID required';
+  }
+
+  return errors;
+};

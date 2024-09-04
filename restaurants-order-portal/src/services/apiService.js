@@ -104,17 +104,34 @@ export const getFoodItems = async (restaurantId) => {
   return response.data;
 };
 
-export const addFoodItem = async (foodItem) => {
-  const response = await axios.post(`${RESTAURANT_API_URL}/restaurant/food/add`, foodItem);
-  return response.data;
+
+export const addFoodItem = async (formData) => {
+  try {
+    const response = await axios.post('http://localhost:8080/restaurant/food/add', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (err) {
+    throw err.response;
+  }
 };
 
-export const updateFoodItem = async (foodId, foodItem) => {
-  const response = await axios.put(`${RESTAURANT_API_URL}/restaurant/food/update/${foodId}`, foodItem);
-  return response.data;
+export const updateFoodItem = async (foodId, formData) => {
+  try {
+    const response = await axios.put(`${RESTAURANT_API_URL}/food/update/${foodId}`, formData);
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
 };
 
 export const deleteFoodItem = async (foodId) => {
-  const response = await axios.delete(`${RESTAURANT_API_URL}/restaurant/food/delete/${foodId}`);
-  return response.data;
+  try {
+    const response = await axios.delete(`${RESTAURANT_API_URL}/food-items/${foodId}`);
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
 };

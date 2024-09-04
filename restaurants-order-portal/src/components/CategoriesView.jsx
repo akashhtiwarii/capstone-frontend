@@ -1,41 +1,57 @@
 import React, { useState } from 'react';
 import { addCategory, updateCategory, deleteCategory } from '../services/apiService';
-import '../styles/CategoriesView.css'; // Import CSS
+import Popup from './Popup'; 
+import '../styles/CategoriesView.css'; 
 
 const CategoriesView = ({ categories, restaurantId, setCategories, fetchCategories }) => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
   const [updatedCategoryName, setUpdatedCategoryName] = useState('');
-  const userId = localStorage.getItem('user');
+  const [popupMessage, setPopupMessage] = useState('');  
+  const user = localStorage.getItem('user');
+  const parsedUser = JSON.parse(user);
+  const userId = parsedUser.userId;
 
   const handleAddCategory = async () => {
     try {
-      await addCategory({ userId, restaurantId, name: newCategoryName });
+      const response = await addCategory({ userId, restaurantId, name: newCategoryName });
+      setPopupMessage(response.message || 'Category added successfully');
       setNewCategoryName('');
       setIsAdding(false);
       fetchCategories();
     } catch (err) {
-      console.error('Failed to add category:', err);
+      const message = err.response && err.response.data && err.response.data.message 
+        ? err.response.data.message 
+        : 'Failed to add category';
+      setPopupMessage(message);
     }
   };
 
   const handleUpdateCategory = async (categoryId) => {
     try {
-      await updateCategory(categoryId, { userId, name: updatedCategoryName });
+      const response = await updateCategory(categoryId, { userId: userId, name: updatedCategoryName });
+      setPopupMessage(response.message || 'Category updated successfully');
       setEditingCategoryId(null);
       fetchCategories();
     } catch (err) {
-      console.error('Failed to update category:', err);
+      const message = err.response && err.response.data && err.response.data.message 
+        ? err.response.data.message 
+        : 'Failed to update category';
+      setPopupMessage(message);
     }
   };
 
   const handleDeleteCategory = async (categoryId) => {
     try {
-      await deleteCategory(categoryId);
+      const response = await deleteCategory(categoryId);
+      setPopupMessage(response.message || 'Category deleted successfully');
       fetchCategories();
     } catch (err) {
-      console.error('Failed to delete category:', err);
+      const message = err.response && err.response.data && err.response.data.message 
+        ? err.response.data.message 
+        : 'Failed to delete category';
+      setPopupMessage(message);
     }
   };
 
@@ -82,6 +98,7 @@ const CategoriesView = ({ categories, restaurantId, setCategories, fetchCategori
           <button className="btn cancel" onClick={() => setIsAdding(false)}>Cancel</button>
         </div>
       )}
+      <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
     </div>
   );
 };
