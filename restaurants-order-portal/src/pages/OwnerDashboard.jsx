@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Popup from '../components/Popup'; // Import the Popup component
-import './OwnerDashboard.css';
+import Sidebar from '../components/Sidebar';
+import Popup from '../components/Popup';
+import '../styles/OwnerDashboard.css';
 import { getRestaurantsByOwner } from '../services/apiService';
+
 const OwnerDashboard = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(''); 
-  const [showPopup, setShowPopup] = useState(false); 
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
+  const [currentView, setCurrentView] = useState('dashboard');
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -24,7 +27,7 @@ const OwnerDashboard = () => {
 
         if (data.error) {
           setErrorMessage(data.message);
-          setShowPopup(true); 
+          setShowPopup(true);
           return;
         }
 
@@ -40,12 +43,9 @@ const OwnerDashboard = () => {
     fetchRestaurants();
   }, []);
 
+  // Re-add handleRestaurantClick function
   const handleRestaurantClick = (restaurantId) => {
     navigate('/restaurant-detail', { state: { restaurantId } });
-  };
-
-  const handleProfileClick = () => {
-    navigate('/profile');
   };
 
   const handleLogoutClick = () => {
@@ -61,15 +61,15 @@ const OwnerDashboard = () => {
     setShowPopup(false);
   };
 
+  const menuItems = [
+    { label: 'My Restaurants', view: 'dashboard', onClick: () => navigate('/owner-dashboard') },
+    { label: 'Profile', view: 'profile', onClick: () => navigate('/profile') },
+    { label: 'Logout', view: 'logout', onClick: handleLogoutClick },
+  ];
+
   return (
     <div className="owner-dashboard">
-      <div className="owner-dashboard-sidebar">
-        <ul>
-          <li onClick={() => navigate('/owner-dashboard')} className="side-panel-item">My Restaurants</li>
-          <li onClick={handleProfileClick} className="side-panel-item">Profile</li>
-          <li onClick={handleLogoutClick} className="side-panel-item">Logout</li>
-        </ul>
-      </div>
+      <Sidebar menuItems={menuItems} currentView={currentView} setCurrentView={setCurrentView} />
       <div className="owner-dashboard-main-content">
         <h1>My Restaurants</h1>
         {loading ? (

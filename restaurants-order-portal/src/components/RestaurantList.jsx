@@ -1,5 +1,5 @@
 import React from 'react';
-import './RestaurantList.css';
+import '../styles/RestaurantList.css';
 
 const RestaurantList = ({ restaurants, defaultImage }) => {
   return (

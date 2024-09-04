@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './RestaurantPage.css';
+import '../styles/RestaurantPage.css';
 import AppBar from '../components/AppBar';
 import RestaurantList from '../components/RestaurantList';
 import { useNavigate } from 'react-router-dom';

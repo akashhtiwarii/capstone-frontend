@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import './AddRestaurantPage.css';
-import { validateRestaurant } from '../components/utils/validationSchema'; // Import the new validation function
+import '../styles/AddRestaurantPage.css';
+import { validateRestaurant } from '../components/utils/validationSchema';
+import { addRestaurant } from '../services/apiService';
 
 const AddRestaurantPage = () => {
   const { register, handleSubmit, setError, formState: { errors } } = useForm();
@@ -10,7 +11,6 @@ const AddRestaurantPage = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    // Validate inputs
     const validationErrors = validateRestaurant(data);
     if (Object.keys(validationErrors).length > 0) {
       Object.entries(validationErrors).forEach(([field, message]) => {
@@ -37,17 +37,7 @@ const AddRestaurantPage = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/restaurant/add', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const responseData = await response.json();
-        setServerError(responseData.message);
-        return;
-      }
-
+      await addRestaurant(formData);
       navigate('/owner-dashboard');
     } catch (err) {
       console.error('Failed to add restaurant:', err);

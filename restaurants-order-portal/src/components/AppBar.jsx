@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './AppBar.css';
+import '../styles/AppBar.css';
 
 const AppBar = ({ user, handleLogout }) => {
   const navigate = useNavigate();
