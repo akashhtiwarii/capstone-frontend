@@ -1,0 +1,109 @@
+.food-items-view {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .food-items-view h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .food-items-view ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .food-items-view li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .food-items-view li:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .food-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+  
+  .food-info span {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 15px;
+  }
+  
+  .food-info p {
+    font-size: 14px;
+    color: #666;
+    margin-right: 15px;
+    max-width: 300px;
+  }
+  
+  .food-info img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 15px;
+  }
+  
+  .food-items-view .btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .food-items-view .btn:hover {
+    background-color: #45a049;
+  }
+  
+  .food-items-view .btn.delete {
+    background-color: #f44336;
+  }
+  
+  .food-items-view .btn.delete:hover {
+    background-color: #e53935;
+  }
+  
+  .food-items-view .btn.cancel {
+    background-color: #777;
+  }
+  
+  .food-items-view .btn.cancel:hover {
+    background-color: #666;
+  }
+  
+  .add-food-item-form {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+  }
+  
+  .add-food-item-form input {
+    margin-bottom: 10px;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .add-food-item-form button {
+    align-self: flex-end;
+  }
+  
