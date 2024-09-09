@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios'; // Import Axios
+import axios from 'axios'; 
 import '../styles/MenuPage.css';
 import { getFoodItemsByRestaurant, getCategoriesByRestaurant } from '../services/apiService';
 import { useParams, useNavigate } from 'react-router-dom';
-import Popup from '../components/Popup'; // Import Popup component
+import Popup from '../components/Popup'; 
 
 const MenuPage = () => {
   const { restaurantId } = useParams();

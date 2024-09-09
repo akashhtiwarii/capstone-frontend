@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const USER_API_URL = 'http://localhost:8081/user';
 const RESTAURANT_API_URL = 'http://localhost:8080';
+const ORDER_API_URL = 'http://localhost:8082';
+
 
 export const registerUser = async (userData) => {
   try {
@@ -145,6 +147,20 @@ export const getRestaurantOrders = async (restaurantId) => {
     });
     return response.data;
   } catch (err) {
+    throw err;
+  }
+};
+
+export const getCartItems = async (userId) => {
+  try {
+    const response = await axios.get(`${ORDER_API_URL}/order/mycart`, {
+      params: { userId },
+    });
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      throw err.response.data;
+    }
     throw err;
   }
 };
