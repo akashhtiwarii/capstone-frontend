@@ -57,6 +57,7 @@ const FoodItemsView = ({ foodItems, restaurantId, setFoodItems, fetchFoodItems }
 
     try {
       const formData = new FormData();
+      formData.append('loggedInOwnerId', userId);
       formData.append('name', updatedFoodItem.name);
       formData.append('description', updatedFoodItem.description || '');
       formData.append('price', updatedFoodItem.price);

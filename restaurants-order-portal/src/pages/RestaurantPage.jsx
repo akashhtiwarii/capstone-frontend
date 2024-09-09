@@ -58,7 +58,7 @@ const RestaurantPage = () => {
         ) : error ? (
           <p>There was an error loading the restaurants.</p>
         ) : (
-          <RestaurantList restaurants={restaurants} defaultImage={defaultImage} />
+          <RestaurantList restaurants={restaurants} defaultImage={defaultImage} onClickRestaurant={(restaurantId) => navigate(`/menu/${restaurantId}`)} />
         )}
       </main>
     </div>

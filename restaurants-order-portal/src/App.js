@@ -6,6 +6,7 @@ import RestaurantPage from './pages/RestaurantPage';
 import OwnerDashboard from './pages/OwnerDashboard';
 import RestaurantDetail from './pages/RestaurantDetail';
 import AddRestaurantPage from './pages/AddRestaurantPage';
+import MenuPage from './pages/MenuPage';
 const App = () => {
 
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/owner-dashboard" element={<OwnerDashboard />} />
         <Route path="/restaurant-detail" element={<RestaurantDetail />} />
         <Route path="/add-restaurant" element={<AddRestaurantPage />} />
+        <Route path="/menu/:restaurantId" element={<MenuPage />} />
       </Routes>
     </Router>
   );

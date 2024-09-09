@@ -120,7 +120,7 @@ export const addFoodItem = async (formData) => {
 
 export const updateFoodItem = async (foodId, formData) => {
   try {
-    const response = await axios.put(`${RESTAURANT_API_URL}/food/update/${foodId}`, formData);
+    const response = await axios.put(`${RESTAURANT_API_URL}/restaurant/food/update/${foodId}`, formData);
     return response.data;
   } catch (err) {
     throw err;
