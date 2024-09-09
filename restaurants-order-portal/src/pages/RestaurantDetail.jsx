@@ -5,6 +5,7 @@ import RestaurantProfile from '../components/RestaurantProfile';
 import MenuView from '../components/MenuView';
 import CategoriesView from '../components/CategoriesView';
 import FoodItemsView from '../components/FoodItemsView';
+import OrdersView from '../components/OrderView';
 import { getRestaurantDetails, getCategories, getFoodItems } from '../services/apiService';
 import '../styles/RestaurantDetail.css';
 
@@ -104,6 +105,8 @@ const RestaurantDetail = () => {
             fetchFoodItems={fetchFoodItems}
           />
         )}
+
+{currentView === 'orders' && <OrdersView restaurantId={restaurantId} />}
       </div>
     </div>
   );

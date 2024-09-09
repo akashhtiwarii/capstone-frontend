@@ -23,7 +23,9 @@ export const loginUser = async (userData) => {
 
 export const getRestaurantsByOwner = async (ownerId) => {
   try {
-    const response = await axios.post(`${RESTAURANT_API_URL}/restaurant/owner`, { ownerId });
+    const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/owner`, {
+      params: { ownerId }
+    });
     return response.data;
   } catch (err) {
     throw err;
@@ -130,6 +132,17 @@ export const updateFoodItem = async (foodId, formData) => {
 export const deleteFoodItem = async (foodId) => {
   try {
     const response = await axios.delete(`${RESTAURANT_API_URL}/food-items/${foodId}`);
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const getRestaurantOrders = async (restaurantId) => {
+  try {
+    const response = await axios.get(`http://localhost:8082/order/restaurantId`, {
+      params: {restaurantId}
+    });
     return response.data;
   } catch (err) {
     throw err;
