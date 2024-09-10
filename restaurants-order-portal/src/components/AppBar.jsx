@@ -13,6 +13,18 @@ const AppBar = ({ user, handleLogout }) => {
     navigate('/signup');
   };
 
+  const handleCart = () => {
+    navigate('/cart');
+  };
+
+  const handleProfile = () => {
+    navigate(`/profile/${user.userId}`);
+  };
+
+  const handleOrders = () => {
+    navigate('/orders');
+  };
+
   return (
     <header className="app-bar">
       <h1 className="app-title">Restaurant Order Portal</h1>
@@ -20,6 +32,15 @@ const AppBar = ({ user, handleLogout }) => {
         {user ? (
           <>
             <span className="user-name">Welcome, {user.name}!</span>
+            <button className="app-button" onClick={handleProfile}>
+              Profile
+            </button>
+            <button className="app-button" onClick={handleCart}>
+              Cart
+            </button>
+            <button className="app-button" onClick={handleOrders}>
+              Orders
+            </button>
             <button className="app-button" onClick={handleLogout}>
               Logout
             </button>
