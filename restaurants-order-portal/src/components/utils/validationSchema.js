@@ -71,3 +71,32 @@ export const validateFoodItem = (data) => {
 
   return errors;
 };
+
+export const validateProfileUpdate = (data) => {
+  const errors = {};
+
+  if (!/^[a-zA-Z\s'-]{2,50}$/.test(data.name)) {
+    errors.name = 'A valid name is mandatory';
+  }
+  if (!/^[\\w.%+-]+@gmail\\.com$/.test(data.email)) {
+    errors.email = 'Valid Email not found';
+  }
+  if (!/^[9876]\\d{9}$/.test(data.phone)) {
+    errors.phone = 'Phone number should be valid';
+  }
+  if (!data.address || data.address.trim() === '') {
+    errors.address = 'Address cannot be empty';
+  }
+  if (!data.city || data.city.trim() === '') {
+    errors.city = 'City cannot be empty';
+  }
+  if (!/^\d{6}$/.test(data.pincode)) {
+    errors.pincode = 'Pincode must be a 6-digit number';
+  }
+  if (!data.state || data.state.trim() === '') {
+    errors.state = 'State cannot be empty';
+  }
+
+  return errors;
+};
+

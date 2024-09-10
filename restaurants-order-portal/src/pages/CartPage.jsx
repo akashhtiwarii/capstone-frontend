@@ -40,9 +40,10 @@ const CartPage = () => {
         <ul className="cart-list">
           {cartItems.map((item) => (
             <li key={item.cartItemId} className="cart-item">
-              <p>Food ID: {item.foodId}</p>
+              <p>Restaurant Item: {item.restaurantName}</p>
+              <p>Food Item: {item.foodName}</p>
               <p>Quantity: {item.quantity}</p>
-              <p>Price: ${item.price}</p>
+              <p>Price: ₹{item.price}</p>
             </li>
           ))}
         </ul>

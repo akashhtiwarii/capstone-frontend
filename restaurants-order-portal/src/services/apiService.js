@@ -23,6 +23,39 @@ export const loginUser = async (userData) => {
   }
 };
 
+export const rechargeWallet = async (userId, amount) => {
+  try {
+    const response = await axios.put(`${USER_API_URL}/wallet/recharge`, null, {
+      params: { userId, amount },
+    });
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const getUserProfile = async (userId) => {
+  try {
+    const response = await axios.get(`http://localhost:8081/user/profile`, {
+    params: { userId }
+  });
+  return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const updateUserProfile = async (userId, profileData) => {
+  try {
+    const response = await axios.put(`${USER_API_URL}/profile/update`, profileData, {
+      params: { userId },
+    });
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const getRestaurantsByOwner = async (ownerId) => {
   try {
     const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/owner`, {
@@ -163,4 +196,11 @@ export const getCartItems = async (userId) => {
     }
     throw err;
   }
+};
+
+export const getUserOrders = async (userId) => {
+  const response = await axios.get(`http://localhost:8082/order/user/orders`, {
+    params: { userId },
+  });
+  return response.data;
 };
