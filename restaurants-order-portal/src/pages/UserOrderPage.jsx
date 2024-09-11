@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { getUserOrders } from '../services/apiService';
+import Popup from '../components/Popup';
 import '../styles/UserOrderPage.css';
 
 const UserOrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null); 
   const [filter, setFilter] = useState('ALL');
-
+  
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -21,14 +22,14 @@ const UserOrderPage = () => {
           setFilteredOrders(data);
           setLoading(false);
         } catch (err) {
-          setError(true);
+          setError(err?.response?.data?.message || "An unexpected error occurred");
           setLoading(false);
         }
       };
 
       fetchOrders();
     } else {
-      setError(true);
+      setError("User not found");
       setLoading(false);
     }
   }, []);
@@ -42,8 +43,13 @@ const UserOrderPage = () => {
     }
   };
 
+  const closePopup = () => {
+    setError(null); 
+  };
+
   return (
     <div className="user-order-page">
+      <Popup message={error} onClose={closePopup} />
       <div className="filter-buttons">
         <button onClick={() => handleFilterChange('ALL')} className={filter === 'ALL' ? 'active' : ''}>All</button>
         <button onClick={() => handleFilterChange('PENDING')} className={filter === 'PENDING' ? 'active' : ''}>Pending</button>
@@ -53,8 +59,6 @@ const UserOrderPage = () => {
 
       {loading ? (
         <p>Loading orders...</p>
-      ) : error ? (
-        <p>There was an error loading the orders.</p>
       ) : filteredOrders.length === 0 ? (
         <p>No orders found for the selected filter.</p>
       ) : (

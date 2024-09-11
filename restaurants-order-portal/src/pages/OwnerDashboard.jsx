@@ -43,7 +43,6 @@ const OwnerDashboard = () => {
     fetchRestaurants();
   }, []);
 
-  // Re-add handleRestaurantClick function
   const handleRestaurantClick = (restaurantId) => {
     navigate('/restaurant-detail', { state: { restaurantId } });
   };
