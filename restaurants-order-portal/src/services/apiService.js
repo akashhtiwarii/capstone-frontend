@@ -245,3 +245,37 @@ export const placeOrder = async (userId) => {
     throw err;
   }
 };
+
+export const cancelOrder = async (orderId) => {
+  try {
+    const response = await axios.put(`${ORDER_API_URL}/order/cancel`, null, {
+      params: { orderId },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const updateOrderStatus = async ({ ownerId, orderId, status }) => {
+  console.log(orderId)
+  console.log(ownerId)
+  console.log(status)
+  const response = await axios.put('http://localhost:8082/order/update', null, {
+    params: { ownerId, orderId, status },
+  });
+  return response.data;
+};
+
+export const updateRestaurant = async (formData) => {
+  try {
+    const response = await axios.put(`${RESTAURANT_API_URL}/restaurant/update`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (err) {
+    throw err;
+  }
+};

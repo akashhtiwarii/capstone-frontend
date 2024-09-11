@@ -3,6 +3,7 @@ import { addFoodItem, updateFoodItem, deleteFoodItem, getCategories } from '../s
 import Popup from './Popup';  
 import '../styles/FoodItemsView.css'; 
 import { validateFoodItem } from './utils/validationSchema';
+import { useNavigate } from 'react-router-dom';
 
 const sampleImageUrl = 'https://via.placeholder.com/150'; 
 
@@ -13,11 +14,18 @@ const FoodItemsView = ({ foodItems, restaurantId, setFoodItems, fetchFoodItems }
   const [updatedFoodItem, setUpdatedFoodItem] = useState({});
   const [popupMessage, setPopupMessage] = useState('');  
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
   const user = localStorage.getItem('user');
   const parsedUser = JSON.parse(user);
+  const userRole = parsedUser.role;
   const userId = parsedUser.userId;
 
   useEffect(() => {
+    if (userRole !== 'OWNER') {
+      localStorage.removeItem('user'); 
+      navigate('/login'); 
+      return;
+    }
     const fetchCategoriesData = async () => {
       try {
         const data = await getCategories(restaurantId);
@@ -28,22 +36,22 @@ const FoodItemsView = ({ foodItems, restaurantId, setFoodItems, fetchFoodItems }
     };
 
     fetchCategoriesData();
-  }, [restaurantId]);
+  }, [userRole, navigate, restaurantId]);
 
   const handleAddFoodItem = async () => {
     const validationErrors = validateFoodItem(newFoodItem);
     if (Object.keys(validationErrors).length > 0) {
-      alert(Object.values(validationErrors).join('\n'));
+      setPopupMessage(Object.values(validationErrors).join(', '));
       return;
     }
   
     try {
       const formData = new FormData();
-      formData.append('foodItem.loggedInOwnerId', userId);
-      formData.append('foodItem.categoryId', newFoodItem.categoryId); 
-      formData.append('foodItem.name', newFoodItem.name);
-      formData.append('foodItem.description', newFoodItem.description || '');
-      formData.append('foodItem.price', newFoodItem.price);
+      formData.append('loggedInOwnerId', userId);
+      formData.append('categoryId', newFoodItem.categoryId); 
+      formData.append('name', newFoodItem.name);
+      formData.append('description', newFoodItem.description || '');
+      formData.append('price', newFoodItem.price);
       if (newFoodItem.image) {
         formData.append('image', newFoodItem.image);
       }
@@ -54,25 +62,31 @@ const FoodItemsView = ({ foodItems, restaurantId, setFoodItems, fetchFoodItems }
       setIsAdding(false);
       fetchFoodItems();
     } catch (err) {
-      const message = err.response?.data?.message || 'Failed to add food item';
-      setPopupMessage(message);
+      const errorData = err.response?.data || {};
+      console.log("ERRORS : ", errorData); 
+      if (typeof errorData === 'object') {
+        const errorMessages = Object.values(errorData).join(', ');
+        setPopupMessage(`Validation Errors: ${errorMessages}`);
+      } else {
+        setPopupMessage('An unexpected error occurred');
+      }
     }
   };
 
   const handleUpdateFoodItem = async (foodId) => {
     const validationErrors = validateFoodItem(updatedFoodItem);
     if (Object.keys(validationErrors).length > 0) {
-      alert(Object.values(validationErrors).join('\n'));
+      setPopupMessage(Object.values(validationErrors).join(', '));
       return;
     }
 
     try {
       const formData = new FormData();
-      formData.append('updateFoodItemInDTO.loggedInOwnerId', userId);
-      formData.append('updateFoodItemInDTO.categoryId', updatedFoodItem.categoryId);
-      formData.append('updateFoodItemInDTO.name', updatedFoodItem.name);
-      formData.append('updateFoodItemInDTO.description', updatedFoodItem.description || '');
-      formData.append('updateFoodItemInDTO.price', updatedFoodItem.price);
+      formData.append('loggedInOwnerId', userId);
+      formData.append('categoryId', updatedFoodItem.categoryId);
+      formData.append('name', updatedFoodItem.name);
+      formData.append('description', updatedFoodItem.description || '');
+      formData.append('price', updatedFoodItem.price);
       if (updatedFoodItem.image) {
         formData.append('image', updatedFoodItem.image);
       }
@@ -82,7 +96,7 @@ const FoodItemsView = ({ foodItems, restaurantId, setFoodItems, fetchFoodItems }
       setEditingFoodId(null);
       fetchFoodItems();
     } catch (err) {
-      const message = err.response?.data?.message || 'Failed to update food item';
+      const message = err.response?.data || 'Failed to update food item';
       setPopupMessage(message);
     }
   };

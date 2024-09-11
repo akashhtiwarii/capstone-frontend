@@ -1,15 +1,12 @@
 import React from 'react';
 
-const ImageUpload = ({ image, name, isEditing, setRestaurant }) => {
+const ImageUpload = ({ image, isEditing, setImage }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setRestaurant((prevState) => ({
-          ...prevState,
-          image: reader.result.split(',')[1],
-        }));
+        setImage(reader.result.split(',')[1]); // Update the state with the base64 image data
       };
       reader.readAsDataURL(file);
     }
@@ -20,7 +17,7 @@ const ImageUpload = ({ image, name, isEditing, setRestaurant }) => {
   ) : (
     <img
       src={image ? `data:image/jpeg;base64,${image}` : 'https://via.placeholder.com/150'}
-      alt={name}
+      alt="Restaurant"
       className="restaurant-detail-image"
     />
   );

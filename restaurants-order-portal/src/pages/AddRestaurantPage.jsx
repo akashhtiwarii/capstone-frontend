@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/AddRestaurantPage.css';
 import { validateRestaurant } from '../components/utils/validationSchema';
 import { addRestaurant } from '../services/apiService';
+import Popup from '../components/Popup';
 
 const AddRestaurantPage = () => {
   const { register, handleSubmit, setError, formState: { errors } } = useForm();
-  const [serverError, setServerError] = useState('');
+  const [popupMessage, setPopupMessage] = useState('');
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
@@ -18,30 +19,40 @@ const AddRestaurantPage = () => {
       });
       return;
     }
-
+  
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
+      setPopupMessage('User is not logged in');
       return;
     }
-
+  
     const parsedUser = JSON.parse(storedUser);
-
+  
     const formData = new FormData();
-    formData.append('restaurant.ownerId', parsedUser.userId);
-    formData.append('restaurant.name', data.name);
-    formData.append('restaurant.email', data.email);
-    formData.append('restaurant.phone', data.phone);
-    formData.append('restaurant.address', data.address);
+    formData.append('name', data.name);
+    formData.append('email', data.email);
+    formData.append('phone', data.phone);
+    formData.append('address', data.address);
+    formData.append('ownerId', parsedUser.userId);
+  
     if (data.image[0]) {
       formData.append('image', data.image[0]);
     }
-
+  
     try {
-      await addRestaurant(formData);
-      navigate('/owner-dashboard');
+      const response = await addRestaurant(formData);
+      setPopupMessage(response.message);
+      setTimeout(() => {
+        navigate('/owner-dashboard');
+      }, 2000);
     } catch (err) {
-      console.error('Failed to add restaurant:', err);
-      setServerError('An error occurred while adding the restaurant.');
+      if (err.response && err.response.data) {
+        const backendErrors = err.response.data;
+        const errorMessages = Object.values(backendErrors).join(', '); 
+        setPopupMessage(`Validation Errors: ${errorMessages}`); 
+      } else {
+        setPopupMessage('An error occurred while adding the restaurant.');
+      }
     }
   };
 
@@ -56,7 +67,7 @@ const AddRestaurantPage = () => {
       </div>
       <div className="add-restaurant-main-content">
         <h1>Add Restaurant</h1>
-        {serverError && <p className="error-message">{serverError}</p>}
+        <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
         <form onSubmit={handleSubmit(onSubmit)} className="add-restaurant-form">
           <label>
             Name:

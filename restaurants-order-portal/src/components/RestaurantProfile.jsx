@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
-import ImageUpload from './ImageUpload';
+import React, { useState, useEffect } from 'react';
+import Popup from './Popup';
+import { updateRestaurant } from '../services/apiService';
+import { getRestaurantDetails } from '../services/apiService';
+import { useLocation } from 'react-router-dom';
 
-const RestaurantProfile = ({ restaurant, setRestaurant }) => {
+const RestaurantProfile = ({ setRestaurant }) => {
+  const [restaurant, setRestaurantState] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [image, setImage] = useState(null);
+  const [popupMessage, setPopupMessage] = useState('');
+  const location = useLocation();
+  const { restaurantId } = location.state || {};
+
+  useEffect(() => {
+    const fetchRestaurantDetails = async () => {
+      try {
+        const response = await getRestaurantDetails(restaurantId); 
+        setRestaurantState(response);
+      } catch (err) {
+        console.error('Failed to fetch restaurant details:', err);
+        setPopupMessage('Failed to fetch restaurant details');
+      }
+    };
+
+    fetchRestaurantDetails();
+  }, [restaurantId]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setRestaurant((prevState) => ({
+    setRestaurantState((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+  };
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]); 
   };
 
   const toggleEditMode = () => {
@@ -17,19 +43,55 @@ const RestaurantProfile = ({ restaurant, setRestaurant }) => {
   };
 
   const handleSave = async () => {
-    console.log('Saving updated restaurant details:', restaurant);
-    setIsEditing(false);
+    const user = localStorage.getItem('user');
+    if (!user) {
+      setPopupMessage('User ID is not Logged In');
+      return;
+    }
+    const parsedUser = JSON.parse(user);
+
+    try {
+      const formData = new FormData();
+      formData.append('name', restaurant.name);
+      formData.append('email', restaurant.email);
+      formData.append('phone', restaurant.phone);
+      formData.append('address', restaurant.address);
+      formData.append('restaurantId', restaurant.restaurantId);
+      formData.append('loggedInOwnerId', parsedUser.userId);
+
+      if (image) {
+        formData.append('image', image); 
+      }
+
+      const response = await updateRestaurant(formData);
+
+      setPopupMessage(response.message);
+      setIsEditing(false);
+      const updatedRestaurantDetails = await getRestaurantDetails(restaurant.restaurantId);
+      setRestaurantState(updatedRestaurantDetails);
+    } catch (err) {
+      const errorData = err.response?.data || {};
+      const errorMessages = Object.values(errorData).join(', ');
+      setPopupMessage(`Validation Errors: ${errorMessages}`);
+    }
   };
 
-  return (
+  return restaurant ? (
     <>
       <h1>{restaurant.name}</h1>
-      <ImageUpload
-        image={restaurant.image}
-        name={restaurant.name}
-        isEditing={isEditing}
-        setRestaurant={setRestaurant}
-      />
+      {restaurant.image ? (
+        <img
+          src={`data:image/jpeg;base64,${restaurant.image}`}
+          alt="Restaurant"
+          className="restaurant-detail-image"
+        />
+      ) : (
+        <img
+          src="https://via.placeholder.com/150"
+          alt="Default Restaurant"
+          className="restaurant-detail-image"
+        />
+      )}
       <div className="restaurant-info">
         <label>
           <strong>Name:</strong>
@@ -83,6 +145,12 @@ const RestaurantProfile = ({ restaurant, setRestaurant }) => {
             <span>{restaurant.address}</span>
           )}
         </label>
+        {isEditing && (
+          <label>
+            <strong>Image:</strong>
+            <input type="file" onChange={handleImageChange} />
+          </label>
+        )}
       </div>
       <button onClick={toggleEditMode}>
         {isEditing ? 'Cancel' : 'Edit'}
@@ -92,7 +160,10 @@ const RestaurantProfile = ({ restaurant, setRestaurant }) => {
           Save
         </button>
       )}
+      <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
     </>
+  ) : (
+    <p>Loading restaurant details...</p>
   );
 };
 

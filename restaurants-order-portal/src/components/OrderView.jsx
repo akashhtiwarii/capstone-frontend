@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getRestaurantOrders } from '../services/apiService';
+import { getRestaurantOrders, updateOrderStatus } from '../services/apiService'; 
 import Popup from './Popup';
 import '../styles/OrdersView.css';
 
@@ -8,8 +8,10 @@ const OrdersView = ({ restaurantId }) => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [popupMessage, setPopupMessage] = useState('');
   const [filter, setFilter] = useState('ALL');
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [newStatus, setNewStatus] = useState('');
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -20,7 +22,7 @@ const OrdersView = ({ restaurantId }) => {
       } catch (err) {
         console.error('Failed to fetch orders:', err);
         setError(true);
-        setErrorMessage(err.response?.data?.message || 'An unknown error occurred.');
+        setPopupMessage(err.response?.data?.message || 'An unknown error occurred.');
       } finally {
         setLoading(false);
       }
@@ -40,11 +42,38 @@ const OrdersView = ({ restaurantId }) => {
 
   const handleClosePopup = () => {
     setError(false);
-    setErrorMessage('');
+    setPopupMessage('');
   };
 
   const handleFilterChange = (status) => {
     setFilter(status);
+  };
+
+  const handleUpdateOrder = (order) => {
+    setSelectedOrder(order);
+  };
+
+  const handleStatusChange = async () => {
+    if (newStatus && selectedOrder) {
+      try {
+        const response = await updateOrderStatus({
+          ownerId: selectedOrder.userId,
+          orderId: selectedOrder.orderId,
+          status: newStatus,
+        });
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order.orderId === selectedOrder.orderId ? { ...order, status: newStatus } : order
+          )
+        );
+        setPopupMessage(response.message || 'Order updated successfully');
+        setSelectedOrder(null);
+      } catch (err) {
+        console.error('Failed to update order:', err);
+        setError(true);
+        setPopupMessage(err.response?.data?.message || 'Failed to update the order.');
+      }
+    }
   };
 
   if (loading) {
@@ -53,7 +82,7 @@ const OrdersView = ({ restaurantId }) => {
 
   return (
     <div className="orders-view">
-      {error && <Popup message={errorMessage} onClose={handleClosePopup} />}
+      {popupMessage && <Popup message={popupMessage} onClose={handleClosePopup} />}
       <div className="filter-buttons">
         <button className={filter === 'ALL' ? 'active' : ''} onClick={() => handleFilterChange('ALL')}>All</button>
         <button className={filter === 'PENDING' ? 'active' : ''} onClick={() => handleFilterChange('PENDING')}>Pending</button>
@@ -65,20 +94,33 @@ const OrdersView = ({ restaurantId }) => {
       ) : (
         filteredOrders.map((order, index) => (
           <div key={index} className="order-card">
-            <h3>Order by User ID: {order.userId}</h3>
+            <h3>Order ID: {order.orderId}</h3>
+            <h3>Order by: {order.userName}</h3>
             <p><strong>Delivery Address:</strong> {order.address}</p>
             <p><strong>Order Status:</strong> {order.status}</p>
             <div className="order-details">
-              {order.orderDetailList.map((detail, i) => (
+              {order.orderDetailOutDTOS.map((detail, i) => (
                 <div key={i} className="order-detail">
-                  <p><strong>Order Detail ID:</strong> {detail.orderDetailId}</p>
-                  <p><strong>Food ID:</strong> {detail.foodId}</p>
+                  <p><strong>Food:</strong> {detail.foodName}</p>
                   <p><strong>Quantity:</strong> {detail.quantity}</p>
                   <p><strong>Price:</strong> ${detail.price}</p>
                 </div>
               ))}
             </div>
-            <button className="update-order-btn">Update Order</button>
+            {selectedOrder && selectedOrder.orderId === order.orderId ? (
+              <div className="update-status">
+                <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)}>
+                  <option value="">Select Status</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="ONGOING">Ongoing</option>
+                  <option value="COMPLETED">Completed</option>
+                </select>
+                <button onClick={handleStatusChange} className = "update-status-save-btn">Save</button>
+                <button onClick={() => setSelectedOrder(null)} className = "update-status-cancel-btn">Cancel</button>
+              </div>
+            ) : (
+              <button className="update-order-btn" onClick={() => handleUpdateOrder(order)}>Update Order</button>
+            )}
           </div>
         ))
       )}
