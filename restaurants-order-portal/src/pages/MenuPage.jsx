@@ -91,7 +91,7 @@ const MenuPage = () => {
                   <div className="menu-food-item-content">
                     <h3>{food.name}</h3>
                     <p>{food.description || <span className="menu-no-description">No description available.</span>}</p>
-                    <p>Price: ${food.price}</p>
+                    <p>Price: ₹{food.price}</p>
                     <button onClick={() => handleAddToCart(food)} className="menu-add-to-cart-button">
                       Add to Cart
                     </button>

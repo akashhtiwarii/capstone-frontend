@@ -164,9 +164,11 @@ export const updateFoodItem = async (foodId, formData) => {
   }
 };
 
-export const deleteFoodItem = async (foodId) => {
+export const deleteFoodItem = async (userId, foodId) => {
   try {
-    const response = await axios.delete(`${RESTAURANT_API_URL}/food-items/${foodId}`);
+    const response = await axios.delete(`${RESTAURANT_API_URL}/restaurant/food/delete`,{
+      params: {userId, foodId}
+    });
     return response.data;
   } catch (err) {
     throw err;
@@ -203,4 +205,43 @@ export const getUserOrders = async (userId) => {
     params: { userId },
   });
   return response.data;
+};
+
+export const deleteCartItemById = async (cartItemId) => {
+  try {
+    const response = await axios.delete(`http://localhost:8082/order/cart/delete`, {
+      params: { cartItemId },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+
+export const updateCartItemQuantity = async (cartItemId, delta) => {
+  try {
+    console.log(cartItemId);
+    console.log(delta)
+    const response = await axios.put(`http://localhost:8082/order/cart/update`, null, {
+      params: { cartItemId, delta },
+    });
+    return response.data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+};
+
+export const placeOrder = async (userId) => {
+  try {
+    const response = await axios.post(`${ORDER_API_URL}/order/add`, null, {
+      params: { userId },
+    });
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      throw err.response.data;
+    }
+    throw err;
+  }
 };

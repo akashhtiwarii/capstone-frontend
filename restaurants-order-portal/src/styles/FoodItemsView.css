@@ -107,3 +107,131 @@
     align-self: flex-end;
   }
   
+  /* Add and update food item form */
+.add-food-item-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.add-food-item-form input,
+.add-food-item-form select {
+  margin-bottom: 15px;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.add-food-item-form input:focus,
+.add-food-item-form select:focus {
+  outline: none;
+  border-color: #2c3e50;
+  box-shadow: 0 0 8px rgba(44, 62, 80, 0.3);
+}
+
+.add-food-item-form button {
+  padding: 12px 20px;
+  background-color: #2c3e50;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: flex-end;
+}
+
+.add-food-item-form button:hover {
+  background-color: #45a049;
+}
+
+.add-food-item-form label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.add-food-item-form .error-message {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.food-items-view {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.food-items-view h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Update food item form */
+.update-food-item-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.update-food-item-form input,
+.update-food-item-form select {
+  margin-bottom: 15px;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.update-food-item-form input:focus,
+.update-food-item-form select:focus {
+  outline: none;
+  border-color: #2c3e50;
+  box-shadow: 0 0 8px rgba(44, 62, 80, 0.3);
+}
+
+.update-food-item-form button {
+  padding: 12px 20px;
+  background-color: #2c3e50;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: flex-end;
+}
+
+.update-food-item-form button:hover {
+  background-color: #45a049;
+}
+
+.update-food-item-form label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.update-food-item-form .error-message {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
