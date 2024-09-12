@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { addCategory, updateCategory, deleteCategory } from '../services/apiService';
 import Popup from './Popup'; 
 import '../styles/CategoriesView.css'; 
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const CategoriesView = ({ categories, restaurantId, setCategories, fetchCategories }) => {
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -12,6 +14,15 @@ const CategoriesView = ({ categories, restaurantId, setCategories, fetchCategori
   const user = localStorage.getItem('user');
   const parsedUser = JSON.parse(user);
   const userId = parsedUser.userId;
+  const userRole = parsedUser.role;
+  const navigate = useNavigate(); 
+
+  useEffect(() => {
+    if (userRole !== 'OWNER') {
+      localStorage.removeItem('user');
+      navigate('/login'); 
+    }
+  }, [userRole, navigate]);
 
   const handleAddCategory = async () => {
     try {

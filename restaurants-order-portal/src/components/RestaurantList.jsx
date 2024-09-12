@@ -1,11 +1,11 @@
 import React from 'react';
 import '../styles/RestaurantList.css';
 
-const RestaurantList = ({ restaurants, defaultImage }) => {
+const RestaurantList = ({ restaurants, defaultImage, onClickRestaurant }) => {
   return (
     <div className="restaurant-list">
       {restaurants.map((restaurant) => (
-        <div key={restaurant.restaurantId} className="restaurant-card">
+        <div key={restaurant.restaurantId} className="restaurant-card" onClick={() => onClickRestaurant(restaurant.restaurantId)}>
           <img
             src={restaurant.image ? `data:image/jpeg;base64,${restaurant.image}` : defaultImage}
             alt={restaurant.name}

@@ -1,0 +1,82 @@
+.menu-page {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto; 
+  }
+  
+  .menu-category-section {
+    margin-bottom: 40px;
+  }
+  
+  .menu-category-section h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #333; 
+    border-bottom: 2px solid #eaeaea; 
+    padding-bottom: 5px;
+  }
+  
+  .menu-food-item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu-food-item {
+    border: 1px solid #eaeaea;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff; 
+  }
+  
+  .menu-food-item h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333; 
+  }
+  
+  .menu-food-item p {
+    margin: 5px 0;
+    color: #666; 
+  }
+  
+  .menu-food-item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover; 
+    border-radius: 8px; 
+    margin-right: 20px;
+    flex-shrink: 0; 
+  }
+  
+  .menu-food-item-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .menu-add-to-cart-button {
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    align-self: flex-start;
+    transition: background-color 0.3s;
+  }
+  
+  .menu-add-to-cart-button:hover {
+    background-color: #45a049;
+  }
+  
+  .menu-no-description {
+    font-style: italic;
+    color: #aaa;
+  }
+  
