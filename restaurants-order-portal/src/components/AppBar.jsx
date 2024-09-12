@@ -18,7 +18,7 @@ const AppBar = ({ user, handleLogout }) => {
   };
 
   const handleProfile = () => {
-    navigate(`/profile/${user.userId}`);
+    navigate(`/profile`);
   };
 
   const handleOrders = () => {

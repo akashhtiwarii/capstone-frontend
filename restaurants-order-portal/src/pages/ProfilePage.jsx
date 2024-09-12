@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/ProfilePage.css';
-import { useParams } from 'react-router-dom';
-import { getUserProfile, rechargeWallet } from '../services/apiService';
+import { getUserProfile, rechargeWallet, updateUserProfile } from '../services/apiService';
+import Popup from '../components/Popup';
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -9,13 +10,20 @@ const ProfilePage = () => {
   const [error, setError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [rechargeAmount, setRechargeAmount] = useState('');
+  const [popupMessage, setPopupMessage] = useState('');
+  const navigate = useNavigate();
 
-  const { userId } = useParams();
+  const storedUser = localStorage.getItem('user');
+  const user = JSON.parse(storedUser);
 
   useEffect(() => {
+    if (!storedUser) {
+      navigate('/login');
+      return;
+    }
     const fetchProfile = async () => {
       try {
-        const data = await getUserProfile(userId);
+        const data = await getUserProfile(user.userId);
         setProfile(data);
         setLoading(false);
       } catch (err) {
@@ -24,12 +32,28 @@ const ProfilePage = () => {
         setLoading(false);
       }
     };
-
     fetchProfile();
-  }, [userId]);
+  }, [user.userId, navigate, storedUser]);
 
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
+  const handleEditToggle = async () => {
+    if (isEditing) {
+      const { walletAmount, ...profileData } = profile;
+
+      try {
+        const response = await updateUserProfile(user.userId, profileData);
+        setPopupMessage(response.message);
+        setIsEditing(false);  
+      } catch (err) {
+        console.error('Error updating profile:', err);
+        const errorMessages = err.response?.data
+          ? Object.values(err.response.data).join(', ')
+          : 'Failed to update profile';
+
+        setPopupMessage(errorMessages);
+      }
+    } else {
+      setIsEditing(true); 
+    }
   };
 
   const handleChange = (e) => {
@@ -40,23 +64,19 @@ const ProfilePage = () => {
   const handleRechargeWallet = async () => {
     const amount = parseFloat(rechargeAmount);
     if (isNaN(amount) || amount <= 0) {
-      alert('Please enter a valid amount.');
+      setPopupMessage('Please enter a valid amount.');
       return;
     }
 
     try {
-      const response = await rechargeWallet(userId, amount);
-      alert(response);
+      const response = await rechargeWallet(user.userId, amount);
+      setPopupMessage(response.message);
       setProfile({ ...profile, walletAmount: profile.walletAmount + amount });
       setRechargeAmount('');
     } catch (err) {
       console.error('Error recharging wallet:', err);
-      alert('Failed to recharge wallet.');
+      setPopupMessage('Failed to recharge wallet.');
     }
-  };
-
-  const maskPassword = (password) => {
-    return password ? '•'.repeat(password.length) : '';
   };
 
   if (loading) return <p>Loading profile...</p>;
@@ -64,6 +84,7 @@ const ProfilePage = () => {
 
   return (
     <div className="profile-page">
+      <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
       {profile && (
         <div className="profile-details">
           <div className="profile-field">
@@ -93,10 +114,6 @@ const ProfilePage = () => {
             )}
           </div>
           <div className="profile-field">
-            <strong>Password:</strong>
-            <span>{maskPassword(profile.password)}</span>
-          </div>
-          <div className="profile-field">
             <strong>Phone:</strong>
             {isEditing ? (
               <input
@@ -110,10 +127,6 @@ const ProfilePage = () => {
             )}
           </div>
           <div className="profile-field">
-            <strong>Role:</strong>
-            <span>{profile.role}</span>
-          </div>
-          <div className="profile-field">
             <strong>Address:</strong>
             {isEditing ? (
               <input
@@ -123,7 +136,7 @@ const ProfilePage = () => {
                 onChange={handleChange}
               />
             ) : (
-              <span>{profile.address}</span>
+              <span>{profile.address ? profile.address : 'Address not added'}</span>
             )}
           </div>
           <div className="profile-field">
@@ -136,7 +149,7 @@ const ProfilePage = () => {
                 onChange={handleChange}
               />
             ) : (
-              <span>{profile.city}</span>
+              <span>{profile.city ? profile.city : 'City not added'}</span>
             )}
           </div>
           <div className="profile-field">
@@ -149,7 +162,7 @@ const ProfilePage = () => {
                 onChange={handleChange}
               />
             ) : (
-              <span>{profile.pincode}</span>
+              <span>{profile.pincode !== 0 ? profile.pincode : 'pincode not added'}</span>
             )}
           </div>
           <div className="profile-field">
@@ -162,7 +175,7 @@ const ProfilePage = () => {
                 onChange={handleChange}
               />
             ) : (
-              <span>{profile.state}</span>
+              <span>{profile.state ? profile.state : 'state not added'}</span>
             )}
           </div>
           <div className="profile-field">
