@@ -127,58 +127,6 @@ const ProfilePage = () => {
             )}
           </div>
           <div className="profile-field">
-            <strong>Address:</strong>
-            {isEditing ? (
-              <input
-                type="text"
-                name="address"
-                value={profile.address}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.address ? profile.address : 'Address not added'}</span>
-            )}
-          </div>
-          <div className="profile-field">
-            <strong>City:</strong>
-            {isEditing ? (
-              <input
-                type="text"
-                name="city"
-                value={profile.city}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.city ? profile.city : 'City not added'}</span>
-            )}
-          </div>
-          <div className="profile-field">
-            <strong>Pincode:</strong>
-            {isEditing ? (
-              <input
-                type="number"
-                name="pincode"
-                value={profile.pincode}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.pincode !== 0 ? profile.pincode : 'pincode not added'}</span>
-            )}
-          </div>
-          <div className="profile-field">
-            <strong>State:</strong>
-            {isEditing ? (
-              <input
-                type="text"
-                name="state"
-                value={profile.state}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.state ? profile.state : 'state not added'}</span>
-            )}
-          </div>
-          <div className="profile-field">
             <strong>Wallet Amount:</strong>
             <span>₹{profile.walletAmount.toFixed(2)}</span>
           </div>
