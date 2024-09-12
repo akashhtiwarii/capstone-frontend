@@ -18,11 +18,15 @@ const AppBar = ({ user, handleLogout }) => {
   };
 
   const handleProfile = () => {
-    navigate(`/profile`);
+    navigate('/profile');
   };
 
   const handleOrders = () => {
     navigate('/orders');
+  };
+
+  const handleAddressBook = () => {
+    navigate('/address-book'); // Add this for Address Book
   };
 
   return (
@@ -40,6 +44,9 @@ const AppBar = ({ user, handleLogout }) => {
             </button>
             <button className="app-button" onClick={handleOrders}>
               Orders
+            </button>
+            <button className="app-button" onClick={handleAddressBook}>
+              Address Book
             </button>
             <button className="app-button" onClick={handleLogout}>
               Logout

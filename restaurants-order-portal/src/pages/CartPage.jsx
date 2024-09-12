@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Popup from '../components/Popup';
 import { 
   getCartItems, 
@@ -11,6 +12,8 @@ import '../styles/CartPage.css';
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const navigate = useNavigate();
@@ -32,7 +35,19 @@ const CartPage = () => {
       }
     };
 
+    const fetchAddresses = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8081/user/address`, {
+          params: { userId: user.userId },
+        });
+        setAddresses(response.data);
+      } catch (error) {
+        setErrorMessage('Failed to load addresses.');
+      }
+    };
+
     fetchCart();
+    fetchAddresses();
   }, [navigate, user]);
 
   const handleDelete = async (cartItemId) => {
@@ -59,11 +74,20 @@ const CartPage = () => {
     }
   };
 
+  const handleAddressChange = (event) => {
+    setSelectedAddressId(event.target.value);
+  };
+
   const handlePlaceOrder = async () => {
+    if (!selectedAddressId) {
+      setErrorMessage('Please select a delivery address.');
+      return;
+    }
+
     try {
-      const result = await placeOrder(user.userId);
+      const result = await placeOrder(user.userId, selectedAddressId);
       setSuccessMessage(result);
-      setCartItems([]); 
+      setCartItems([]);
     } catch (error) {
       setErrorMessage(error.message || 'Failed to place order.');
     }
@@ -100,9 +124,24 @@ const CartPage = () => {
       ) : (
         <p>Your cart is empty.</p>
       )}
+      
       {cartItems.length > 0 && (
-        <button onClick={handlePlaceOrder} className="place-order-button">Place Order</button>
+        <div>
+          <div className="address-selection">
+            <label htmlFor="address">Select Delivery Address:</label>
+            <select id="address" value={selectedAddressId} onChange={handleAddressChange}>
+              <option value="">-- Select Address --</option>
+              {addresses.map((address) => (
+                <option key={address.addressId} value={address.addressId}>
+                  {`${address.address}, ${address.city}, ${address.state} - ${address.pincode}`}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button onClick={handlePlaceOrder} className="place-order-button">Place Order</button>
+        </div>
       )}
+      
       {(errorMessage || successMessage) && (
         <Popup message={errorMessage || successMessage} onClose={handleClosePopup} />
       )}

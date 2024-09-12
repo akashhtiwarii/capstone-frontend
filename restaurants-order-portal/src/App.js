@@ -10,6 +10,7 @@ import MenuPage from './pages/MenuPage';
 import CartPage from './pages/CartPage';
 import ProfilePage from './pages/ProfilePage';
 import UserOrderPage from './pages/UserOrderPage';
+import AddressBookPage from './pages/AddressBookPage';
 const App = () => {
 
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/orders" element={<UserOrderPage />} />
+        <Route path="/address-book" element={<AddressBookPage />} />
       </Routes>
     </Router>
   );
