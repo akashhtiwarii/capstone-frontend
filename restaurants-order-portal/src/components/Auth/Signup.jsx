@@ -25,7 +25,7 @@ const Signup = ({ onSignup }) => {
       const requestData = { ...restData, password: encryptedPassword };
       const response = await registerUser(requestData);
       onSignup(response);
-      setPopupMessage(response);
+      setPopupMessage(response.message);
       setTimeout(() => {
         navigate('/login');
       }, 500);

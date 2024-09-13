@@ -2,6 +2,7 @@
   padding: 20px;
   background-color: #f7f7f7;
   min-height: 100vh;
+  font-family: 'Arial', sans-serif;
 }
 
 .filter-buttons {
@@ -18,12 +19,13 @@
   color: white;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .filter-buttons button.active,
 .filter-buttons button:hover {
   background-color: #1a252f;
+  transform: translateY(-2px);
 }
 
 .order-list {
@@ -68,8 +70,6 @@
   border-radius: 5px;
   border: 1px solid #ddd;
 }
-
-/* New CSS for Timer and Cancel Button */
 
 .timer {
   display: inline-block;

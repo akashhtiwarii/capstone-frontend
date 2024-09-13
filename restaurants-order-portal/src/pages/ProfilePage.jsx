@@ -126,21 +126,25 @@ const ProfilePage = () => {
               <span>{profile.phone}</span>
             )}
           </div>
-          <div className="profile-field">
-            <strong>Wallet Amount:</strong>
-            <span>₹{profile.walletAmount.toFixed(2)}</span>
-          </div>
-          <div className="recharge-wallet">
-            <input
-              type="number"
-              value={rechargeAmount}
-              onChange={(e) => setRechargeAmount(e.target.value)}
-              placeholder="Enter amount"
-            />
-            <button className="recharge-button" onClick={handleRechargeWallet}>
-              Recharge Wallet
-            </button>
-          </div>
+          {user.role !== 'OWNER' && (
+            <>
+              <div className="profile-field">
+                <strong>Wallet Amount:</strong>
+                <span>₹{profile.walletAmount.toFixed(2)}</span>
+              </div>
+              <div className="recharge-wallet">
+                <input
+                  type="number"
+                  value={rechargeAmount}
+                  onChange={(e) => setRechargeAmount(e.target.value)}
+                  placeholder="Enter amount"
+                />
+                <button className="recharge-button" onClick={handleRechargeWallet}>
+                  Recharge Wallet
+                </button>
+              </div>
+            </>
+          )}
           <button className="edit-button" onClick={handleEditToggle}>
             {isEditing ? 'Save Changes' : 'Update Profile'}
           </button>

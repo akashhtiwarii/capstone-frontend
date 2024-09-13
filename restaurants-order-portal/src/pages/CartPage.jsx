@@ -86,7 +86,7 @@ const CartPage = () => {
 
     try {
       const result = await placeOrder(user.userId, selectedAddressId);
-      setSuccessMessage(result);
+      setSuccessMessage(result.message);
       setCartItems([]);
     } catch (error) {
       setErrorMessage(error.message || 'Failed to place order.');

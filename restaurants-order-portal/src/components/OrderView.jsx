@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getRestaurantOrders, updateOrderStatus } from '../services/apiService'; 
+import { getRestaurantOrders, updateOrderStatus, contactSupport } from '../services/apiService'; 
 import Popup from './Popup';
+import ContactSupportPopup from '../components/ContactSupportPopup'; 
 import '../styles/OrdersView.css';
 
 const OrdersView = ({ restaurantId }) => {
@@ -12,6 +13,9 @@ const OrdersView = ({ restaurantId }) => {
   const [filter, setFilter] = useState('ALL');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [newStatus, setNewStatus] = useState('');
+  const [showContactPopup, setShowContactPopup] = useState(false);
+  const [contactOrder, setContactOrder] = useState(null);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -76,6 +80,34 @@ const OrdersView = ({ restaurantId }) => {
     }
   };
 
+  const handleContactSupport = (order) => {
+    setContactOrder(order);
+    setShowContactPopup(true);
+  };
+
+  const submitContactForm = async ({ subject, message }) => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const fromEmail = storedUser.email;
+    const contactData = {
+      restaurantEmail: contactOrder.restaurantEmail,
+      subject,
+      message,
+      fromEmail,
+    };
+
+    try {
+      setIsSending(true);
+      await contactSupport(contactData);
+      setPopupMessage('Support contacted successfully');
+      setIsSending(false);
+      setShowContactPopup(false); 
+    } catch (err) {
+      setError(true);
+      setPopupMessage(err?.response?.data?.message || 'Failed to contact support');
+      setIsSending(false);
+    }
+  };
+
   if (loading) {
     return <p>Loading orders...</p>;
   }
@@ -83,6 +115,17 @@ const OrdersView = ({ restaurantId }) => {
   return (
     <div className="orders-view">
       {popupMessage && <Popup message={popupMessage} onClose={handleClosePopup} />}
+
+      {/* Reusable Contact Support Popup */}
+      {showContactPopup && (
+        <ContactSupportPopup
+          order={contactOrder}
+          onClose={() => setShowContactPopup(false)}
+          onSubmit={submitContactForm}
+          isSending={isSending}
+        />
+      )}
+
       <div className="filter-buttons">
         <button className={filter === 'ALL' ? 'active' : ''} onClick={() => handleFilterChange('ALL')}>All</button>
         <button className={filter === 'PENDING' ? 'active' : ''} onClick={() => handleFilterChange('PENDING')}>Pending</button>
@@ -115,11 +158,15 @@ const OrdersView = ({ restaurantId }) => {
                   <option value="ONGOING">Ongoing</option>
                   <option value="COMPLETED">Completed</option>
                 </select>
-                <button onClick={handleStatusChange} className = "update-status-save-btn">Save</button>
-                <button onClick={() => setSelectedOrder(null)} className = "update-status-cancel-btn">Cancel</button>
+                <button onClick={handleStatusChange} className="update-status-save-btn">Save</button>
+                <button onClick={() => setSelectedOrder(null)} className="update-status-cancel-btn">Cancel</button>
               </div>
             ) : (
-              <button className="update-order-btn" onClick={() => handleUpdateOrder(order)}>Update Order</button>
+              <>
+                <button className="update-order-btn" onClick={() => handleUpdateOrder(order)}>Update Order</button>
+                {/* Contact Support Button */}
+                <button className="contact-support-btn" onClick={() => handleContactSupport(order)}>Contact Support</button>
+              </>
             )}
           </div>
         ))

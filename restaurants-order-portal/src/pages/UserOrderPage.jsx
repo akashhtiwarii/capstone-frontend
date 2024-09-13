@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { getUserOrders, cancelOrder } from '../services/apiService'; 
+import { getUserOrders, cancelOrder, contactSupport } from '../services/apiService';
 import Popup from '../components/Popup';
+import ContactSupportPopup from '../components/ContactSupportPopup';
 import '../styles/UserOrderPage.css';
 
 const UserOrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [filter, setFilter] = useState('ALL');
+  const [showContactPopup, setShowContactPopup] = useState(false);
+  const [contactOrder, setContactOrder] = useState(null);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -22,14 +27,14 @@ const UserOrderPage = () => {
           setFilteredOrders(data);
           setLoading(false);
         } catch (err) {
-          setError(err?.response?.data?.message || "An unexpected error occurred");
+          setError(err?.response?.data?.message || 'An unexpected error occurred');
           setLoading(false);
         }
       };
 
       fetchOrders();
     } else {
-      setError("User not found");
+      setError('User not found');
       setLoading(false);
     }
   }, []);
@@ -44,22 +49,22 @@ const UserOrderPage = () => {
   };
 
   const closePopup = () => {
-    setError(null); 
+    setError(null);
+    setSuccessMessage(null);
+    setShowContactPopup(false);
   };
 
   const handleCancelOrder = async (orderId) => {
     try {
-      const response = await cancelOrder(orderId); 
-        
-        alert('Order cancelled successfully');
-        const updatedOrders = orders.map(order => 
-          order.orderId === orderId ? { ...order, status: 'CANCELLED' } : order
-        );
-        setOrders(updatedOrders);
-        setFilteredOrders(updatedOrders);
-      
+      await cancelOrder(orderId);
+      setSuccessMessage('Order cancelled successfully');
+      const updatedOrders = orders.map(order =>
+        order.orderId === orderId ? { ...order, status: 'CANCELLED' } : order
+      );
+      setOrders(updatedOrders);
+      setFilteredOrders(updatedOrders);
     } catch (err) {
-      const errorMsg = err?.message || "Failed to cancel the order";
+      const errorMsg = err?.response?.data?.message || 'Failed to cancel the order';
       setError(errorMsg);
     }
   };
@@ -91,9 +96,49 @@ const UserOrderPage = () => {
     return <span className="timer">Time left to cancel: {remainingTime} seconds</span>;
   };
 
+  const handleContactSupport = (order) => {
+    setContactOrder(order);
+    setShowContactPopup(true);
+  };
+
+  const submitContactForm = async ({ subject, message }) => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const fromEmail = storedUser.email;
+    const contactData = {
+      restaurantEmail: contactOrder.restaurantEmail,
+      subject,
+      message,
+      fromEmail,
+    };
+
+    try {
+      setIsSending(true);
+      await contactSupport(contactData);
+      setSuccessMessage('Support contacted successfully');
+      setIsSending(false);
+      setShowContactPopup(false); // Close the popup after successful submission
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to contact support');
+      setIsSending(false);
+    }
+  };
+
   return (
     <div className="user-order-page">
-      <Popup message={error} onClose={closePopup} />
+      {(error || successMessage) && (
+        <Popup message={error || successMessage} onClose={closePopup} />
+      )}
+
+      {/* Reusable Contact Support Popup */}
+      {showContactPopup && (
+        <ContactSupportPopup
+          order={contactOrder}
+          onClose={() => setShowContactPopup(false)}
+          onSubmit={submitContactForm}
+          isSending={isSending}
+        />
+      )}
+
       <div className="filter-buttons">
         <button onClick={() => handleFilterChange('ALL')} className={filter === 'ALL' ? 'active' : ''}>All</button>
         <button onClick={() => handleFilterChange('PENDING')} className={filter === 'PENDING' ? 'active' : ''}>Pending</button>
@@ -122,6 +167,9 @@ const UserOrderPage = () => {
               ) : (
                 <p>Cannot cancel order</p>
               )}
+
+              {/* Contact Support Button */}
+              <button onClick={() => handleContactSupport(order)}>Contact Support</button>
 
               <div className="food-items">
                 {order.foodItemOutDTOS.map((foodItem, idx) => (

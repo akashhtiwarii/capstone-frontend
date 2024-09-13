@@ -19,23 +19,23 @@ const AddressBookPage = () => {
 
   const user = JSON.parse(localStorage.getItem('user'));
 
-  useEffect(() => {
+  const fetchAddresses = async () => {
     if (!user) {
       setErrorMessage('User not found.');
       return;
     }
-    
-    const fetchAddresses = async () => {
-      try {
-        const data = await getAddressList(user.userId);
-        setAddresses(data);
-      } catch (error) {
-        setErrorMessage(error.message || 'Failed to load addresses.');
-      }
-    };
 
+    try {
+      const data = await getAddressList(user.userId);
+      setAddresses(data);
+    } catch (error) {
+      setErrorMessage(error.message || 'Failed to load addresses.');
+    }
+  };
+
+  useEffect(() => {
     fetchAddresses();
-  }, [user?.userId]);
+  }, [user?.userId]); // Removed dependency on the `user` object, use `user?.userId` instead
 
   const handleDelete = async (addressId) => {
     try {
@@ -105,8 +105,7 @@ const AddressBookPage = () => {
       }
 
       setShowForm(false);
-      const data = await getAddressList(user.userId);
-      setAddresses(data);
+      await fetchAddresses(); // Fetch updated addresses after adding or updating
     } catch (error) {
       setErrorMessage(error.response || 'Failed to save address.');
     }
