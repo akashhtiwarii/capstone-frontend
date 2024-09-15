@@ -31,7 +31,7 @@ const Signup = ({ onSignup }) => {
       }, 500);
     } catch (error) {
       if (error.response.data && error.response.data) {
-        setPopupMessage( 'Signup failed! Please try again.');
+        setPopupMessage( error.response.data.message);
       } else {
         setPopupMessage('Signup failed! Please check your connection.');
       }
