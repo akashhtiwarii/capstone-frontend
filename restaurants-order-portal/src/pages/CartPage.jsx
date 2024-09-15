@@ -9,6 +9,7 @@ import {
   placeOrder 
 } from '../services/apiService';
 import '../styles/CartPage.css';
+import AppBar from '../components/AppBar'; // Import AppBar
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -98,8 +99,15 @@ const CartPage = () => {
     setSuccessMessage(null);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
   return (
-    <div className="cart-page">
+    <div className="cart-items-page">
+      <AppBar user={user} handleLogout={handleLogout} />
+      <div className="cart-page">
       <h2>Your Cart</h2>
       {cartItems.length > 0 ? (
         <ul className="cart-list">
@@ -145,6 +153,7 @@ const CartPage = () => {
       {(errorMessage || successMessage) && (
         <Popup message={errorMessage || successMessage} onClose={handleClosePopup} />
       )}
+      </div>
     </div>
   );
 };

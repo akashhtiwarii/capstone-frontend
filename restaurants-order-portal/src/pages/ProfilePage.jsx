@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/ProfilePage.css';
 import { getUserProfile, rechargeWallet, updateUserProfile } from '../services/apiService';
 import Popup from '../components/Popup';
+import AppBar from '../components/AppBar'; // Import AppBar
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -82,8 +83,15 @@ const ProfilePage = () => {
   if (loading) return <p>Loading profile...</p>;
   if (error) return <p>There was an error loading the profile.</p>;
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
   return (
-    <div className="profile-page">
+    <div className="user-profile-page">
+      {user.role === 'USER' && <AppBar user={user} handleLogout={handleLogout} />}
+      <div className="profile-page">
       <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
       {profile && (
         <div className="profile-details">
@@ -150,6 +158,7 @@ const ProfilePage = () => {
           </button>
         </div>
       )}
+    </div>
     </div>
   );
 };

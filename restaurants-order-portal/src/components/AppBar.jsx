@@ -5,6 +5,10 @@ import '../styles/AppBar.css';
 const AppBar = ({ user, handleLogout }) => {
   const navigate = useNavigate();
 
+  const handleDefault = () => {
+    navigate('/');
+  };
+
   const handleLogin = () => {
     navigate('/login');
   };
@@ -26,7 +30,7 @@ const AppBar = ({ user, handleLogout }) => {
   };
 
   const handleAddressBook = () => {
-    navigate('/address-book'); // Add this for Address Book
+    navigate('/address-book'); 
   };
 
   return (
@@ -36,6 +40,9 @@ const AppBar = ({ user, handleLogout }) => {
         {user ? (
           <>
             <span className="user-name">Welcome, {user.name}!</span>
+            <button className="app-button" onClick={handleDefault}>
+              Restaurants
+            </button>
             <button className="app-button" onClick={handleProfile}>
               Profile
             </button>

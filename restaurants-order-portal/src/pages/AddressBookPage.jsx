@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getAddressList, deleteAddress, updateAddress, addAddress } from '../services/apiService';
 import Popup from '../components/Popup';
 import '../styles/AddressBookPage.css';
+import { useNavigate } from 'react-router-dom';
+import AppBar from '../components/AppBar';
 
 const AddressBookPage = () => {
   const [addresses, setAddresses] = useState([]);
@@ -17,8 +19,11 @@ const AddressBookPage = () => {
     pincode: '',
   });
 
+  const navigate = useNavigate();
+
   const user = JSON.parse(localStorage.getItem('user'));
 
+  
   const fetchAddresses = async () => {
     if (!user) {
       setErrorMessage('User not found.');
@@ -35,7 +40,7 @@ const AddressBookPage = () => {
 
   useEffect(() => {
     fetchAddresses();
-  }, [user?.userId]); // Removed dependency on the `user` object, use `user?.userId` instead
+  }, [user?.userId]); 
 
   const handleDelete = async (addressId) => {
     try {
@@ -105,7 +110,7 @@ const AddressBookPage = () => {
       }
 
       setShowForm(false);
-      await fetchAddresses(); // Fetch updated addresses after adding or updating
+      await fetchAddresses(); 
     } catch (error) {
       setErrorMessage(error.response || 'Failed to save address.');
     }
@@ -115,9 +120,16 @@ const AddressBookPage = () => {
     setErrorMessage(null);
     setSuccessMessage(null);
   };
+  
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
 
   return (
-    <div className="address-book-page">
+    <div className="addresses-book-page">
+      <AppBar user={user} handleLogout={handleLogout} />
+      <div className="address-book-page">
       <h2>Your Address Book</h2>
       <button className="add-address-button" onClick={handleAddClick}>Add Address</button>
       {addresses.length > 0 ? (
@@ -184,6 +196,7 @@ const AddressBookPage = () => {
       {(errorMessage || successMessage) && (
         <Popup message={errorMessage || successMessage} onClose={handleClosePopup} />
       )}
+    </div>
     </div>
   );
 };

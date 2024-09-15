@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getUserOrders, cancelOrder, contactSupport } from '../services/apiService';
 import Popup from '../components/Popup';
 import ContactSupportPopup from '../components/ContactSupportPopup';
+import AppBar from '../components/AppBar'; 
 import '../styles/UserOrderPage.css';
 
 const UserOrderPage = () => {
@@ -15,29 +17,30 @@ const UserOrderPage = () => {
   const [contactOrder, setContactOrder] = useState(null);
   const [isSending, setIsSending] = useState(false);
 
+  const navigate = useNavigate();
+
+  const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
+
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const userId = JSON.parse(storedUser).userId;
-
-      const fetchOrders = async () => {
-        try {
-          const data = await getUserOrders(userId);
-          setOrders(data);
-          setFilteredOrders(data);
-          setLoading(false);
-        } catch (err) {
-          setError(err?.response?.data?.message || 'An unexpected error occurred');
-          setLoading(false);
-        }
-      };
-
-      fetchOrders();
-    } else {
-      setError('User not found');
-      setLoading(false);
+    if (!user) {
+      navigate('/login');
+      return;
     }
-  }, []);
+
+    const fetchOrders = async () => {
+      try {
+        const data = await getUserOrders(user.userId);
+        setOrders(data);
+        setFilteredOrders(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err?.response?.data?.message || 'An unexpected error occurred');
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [user, navigate]);
 
   const handleFilterChange = (status) => {
     setFilter(status);
@@ -72,7 +75,7 @@ const UserOrderPage = () => {
   const calculateRemainingTime = (orderDate) => {
     const now = new Date();
     const orderTime = new Date(orderDate);
-    const timeDifferenceInSeconds = 30 - Math.floor((now - orderTime) / 1000); // 30 seconds timer
+    const timeDifferenceInSeconds = 30 - Math.floor((now - orderTime) / 1000);
     return timeDifferenceInSeconds > 0 ? timeDifferenceInSeconds : 0;
   };
 
@@ -116,20 +119,25 @@ const UserOrderPage = () => {
       await contactSupport(contactData);
       setSuccessMessage('Support contacted successfully');
       setIsSending(false);
-      setShowContactPopup(false); // Close the popup after successful submission
+      setShowContactPopup(false); 
     } catch (err) {
       setError(err?.response?.data?.message || 'Failed to contact support');
       setIsSending(false);
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
   return (
-    <div className="user-order-page">
+    <div className="users-orders-page">
+      <AppBar user={user} handleLogout={handleLogout} />
+      <div className="user-order-page">
       {(error || successMessage) && (
         <Popup message={error || successMessage} onClose={closePopup} />
       )}
-
-      {/* Reusable Contact Support Popup */}
       {showContactPopup && (
         <ContactSupportPopup
           order={contactOrder}
@@ -168,7 +176,6 @@ const UserOrderPage = () => {
                 <p>Cannot cancel order</p>
               )}
 
-              {/* Contact Support Button */}
               <button onClick={() => handleContactSupport(order)}>Contact Support</button>
 
               <div className="food-items">
@@ -184,6 +191,7 @@ const UserOrderPage = () => {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 };
