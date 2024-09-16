@@ -4,7 +4,7 @@ import '../styles/MenuPage.css';
 import { getFoodItemsByRestaurant, getCategoriesByRestaurant } from '../services/apiService';
 import { useParams, useNavigate } from 'react-router-dom';
 import Popup from '../components/Popup'; 
-import AppBar from '../components/AppBar'; // Import the AppBar component
+import AppBar from '../components/AppBar';
 
 const MenuPage = () => {
   const { restaurantId } = useParams();
@@ -13,11 +13,10 @@ const MenuPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
-  const [user, setUser] = useState(null); // Store user info from localStorage
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get user info from localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -45,7 +44,9 @@ const MenuPage = () => {
   const handleAddToCart = async (foodItem) => { 
     if (!user) {
       setPopupMessage('Please log in to add items to your cart.');
-      navigate('/login');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
       return;
     }
 

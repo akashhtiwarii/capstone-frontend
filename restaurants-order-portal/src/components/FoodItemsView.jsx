@@ -63,10 +63,9 @@ const FoodItemsView = ({ foodItems, restaurantId, setFoodItems, fetchFoodItems }
       fetchFoodItems();
     } catch (err) {
       const errorData = err.response?.data || {};
-      console.log("ERRORS : ", errorData); 
       if (typeof errorData === 'object') {
         const errorMessages = Object.values(errorData).join(', ');
-        setPopupMessage(`Validation Errors: ${errorMessages}`);
+        setPopupMessage(`${errorMessages}`);
       } else {
         setPopupMessage('An unexpected error occurred');
       }

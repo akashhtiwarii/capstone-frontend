@@ -32,10 +32,13 @@ const CategoriesView = ({ categories, restaurantId, setCategories, fetchCategori
       setIsAdding(false);
       fetchCategories();
     } catch (err) {
-      const message = err.response && err.response.data && err.response.data.message 
-        ? err.response.data.message 
-        : 'Failed to add category';
-      setPopupMessage(message);
+      const errorData = err.response?.data || {};
+      if (typeof errorData === 'object') {
+        const errorMessages = Object.values(errorData).join(', ');
+        setPopupMessage(`${errorMessages}`);
+      } else {
+        setPopupMessage('An unexpected error occurred');
+      }
     }
   };
 
