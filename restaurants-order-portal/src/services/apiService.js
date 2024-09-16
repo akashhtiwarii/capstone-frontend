@@ -335,3 +335,14 @@ export const contactSupport = async ({ restaurantEmail, subject, message, fromEm
     throw error.response?.data || error;
   }
 };
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await axios.post(`${USER_API_URL}/forgotpassword`, null, {
+      params: { email },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

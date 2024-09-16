@@ -9,7 +9,7 @@ import {
   placeOrder 
 } from '../services/apiService';
 import '../styles/CartPage.css';
-import AppBar from '../components/AppBar'; // Import AppBar
+import AppBar from '../components/AppBar';
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);

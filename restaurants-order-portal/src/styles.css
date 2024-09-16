@@ -83,4 +83,23 @@ body {
       width: 90%;
     }
   }
+
+  .forgot-password-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+  }
+  
+  .forgot-password-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .forgot-password-buttons .btn {
+    width: 48%;
+    font-size: 14px;
+  }
   
