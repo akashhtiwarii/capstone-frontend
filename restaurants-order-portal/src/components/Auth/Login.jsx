@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import Popup from '../Popup';
 import FormInput from '../FormInput';
 import { validateLogin } from '../utils/validationSchema';
-import { loginUser } from '../../services/apiService';
+import { loginUser, forgotPassword } from '../../services/apiService';
 
 const Login = ({ onLogin }) => {
   const { register, handleSubmit, setError, formState: { errors } } = useForm();
   const [popupMessage, setPopupMessage] = useState('');
+  const [showForgotPasswordPopup, setShowForgotPasswordPopup] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,7 +63,7 @@ const Login = ({ onLogin }) => {
       setTimeout(() => {
         navigate(role === 'USER' ? '/' : '/owner-dashboard');
       }, 1000);
-      
+
     } catch (error) {
       if (error.response && error.response.data) {
         const { message } = error.response.data;
@@ -70,6 +72,26 @@ const Login = ({ onLogin }) => {
         console.error('Login error:', error);
         setPopupMessage('Login failed! Please check your connection.');
       }
+    }
+  };
+
+  const handleForgotPasswordClick = () => {
+    setShowForgotPasswordPopup(true);
+  };
+
+  const handleForgotPasswordSubmit = async () => {
+    try {
+      await forgotPassword(forgotPasswordEmail);
+      setPopupMessage('Password reset email sent successfully.');
+    } catch (error) {
+      if (error.response && error.response.data) {
+        const { message } = error.response.data;
+        setPopupMessage(message || 'Failed to send password reset email.');
+      } else {
+        setPopupMessage('Failed to send password reset email. Please check your connection.');
+      }
+    } finally {
+      setShowForgotPasswordPopup(false);
     }
   };
 
@@ -94,6 +116,13 @@ const Login = ({ onLogin }) => {
           errors={errors} 
         />
         <button type="submit" className="btn btn-primary">Login</button>
+        <button 
+          type="button" 
+          className="btn btn-link" 
+          onClick={handleForgotPasswordClick}
+        >
+          Forgot Password?
+        </button>
       </form>
       <button 
         type="button" 
@@ -103,6 +132,27 @@ const Login = ({ onLogin }) => {
         Sign Up
       </button>
       <Popup message={popupMessage} onClose={closePopup} />
+      {showForgotPasswordPopup && (
+        <Popup 
+          message={
+            <>
+              <h3>Forgot Password</h3>
+              <input 
+                type="email" 
+                value={forgotPasswordEmail} 
+                onChange={(e) => setForgotPasswordEmail(e.target.value)} 
+                placeholder="Enter your email" 
+                className="forgot-password-input"
+              />
+              <div className="forgot-password-buttons">
+                <button onClick={handleForgotPasswordSubmit} className="btn btn-primary">Submit</button>
+                <button onClick={() => setShowForgotPasswordPopup(false)} className="btn btn-secondary">Cancel</button>
+              </div>
+            </>
+          }
+          onClose={() => setShowForgotPasswordPopup(false)}
+        />
+      )}
     </div>
   );
 };

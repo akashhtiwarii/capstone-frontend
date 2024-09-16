@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/ProfilePage.css';
 import { getUserProfile, rechargeWallet, updateUserProfile } from '../services/apiService';
 import Popup from '../components/Popup';
-import AppBar from '../components/AppBar'; // Import AppBar
+import AppBar from '../components/AppBar';
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);

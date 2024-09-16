@@ -13,7 +13,7 @@ const OwnerDashboard = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState('dashboard'); // Current view state
+  const [currentView, setCurrentView] = useState('dashboard');
 
   useEffect(() => {
     if (currentView === 'dashboard') {
@@ -67,7 +67,7 @@ const OwnerDashboard = () => {
 
   const menuItems = [
     { label: 'My Restaurants', view: 'dashboard', onClick: () => setCurrentView('dashboard') },
-    { label: 'Profile', view: 'profile', onClick: () => setCurrentView('profile') }, // Handle profile click
+    { label: 'Profile', view: 'profile', onClick: () => setCurrentView('profile') },
     { label: 'Logout', view: 'logout', onClick: handleLogoutClick },
   ];
 

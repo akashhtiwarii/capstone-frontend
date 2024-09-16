@@ -7,6 +7,7 @@ import CategoriesView from '../components/CategoriesView';
 import FoodItemsView from '../components/FoodItemsView';
 import OrdersView from '../components/OrderView';
 import { getRestaurantDetails, getCategories, getFoodItems } from '../services/apiService';
+import Popup from '../components/Popup';  
 import '../styles/RestaurantDetail.css';
 
 const RestaurantDetail = () => {
@@ -14,12 +15,12 @@ const RestaurantDetail = () => {
   const { restaurantId } = location.state;
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [currentView, setCurrentView] = useState('profile');
   const [categories, setCategories] = useState([]);
   const [foodItems, setFoodItems] = useState([]);
-  const [categoryError, setCategoryError] = useState(false);
-  const [foodError, setFoodError] = useState(false);
+  const [categoryError, setCategoryError] = useState('');
+  const [foodError, setFoodError] = useState('');
 
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
@@ -27,8 +28,8 @@ const RestaurantDetail = () => {
         const data = await getRestaurantDetails(restaurantId);
         setRestaurant(data);
       } catch (err) {
-        console.error('Failed to fetch restaurant details:', err);
-        setError(true);
+        const message = err.response?.data?.message || 'Failed to fetch restaurant details';
+        setError(message);
       } finally {
         setLoading(false);
       }
@@ -42,8 +43,8 @@ const RestaurantDetail = () => {
       const data = await getCategories(restaurantId);
       setCategories(data);
     } catch (err) {
-      console.error('Failed to fetch categories:', err);
-      setCategoryError(true);
+      const message = err.response?.data?.message || 'Failed to fetch categories';
+      setCategoryError(message);
     }
   };
 
@@ -52,8 +53,8 @@ const RestaurantDetail = () => {
       const data = await getFoodItems(restaurantId);
       setFoodItems(data);
     } catch (err) {
-      console.error('Failed to fetch food items:', err);
-      setFoodError(true);
+      const message = err.response?.data?.message || 'Failed to fetch food items';
+      setFoodError(message);
     }
   };
 
@@ -75,10 +76,6 @@ const RestaurantDetail = () => {
 
   if (loading) {
     return <p>Loading restaurant details...</p>;
-  }
-
-  if (error) {
-    return <p>There was an error loading the restaurant details.</p>;
   }
 
   return (
@@ -105,9 +102,18 @@ const RestaurantDetail = () => {
             fetchFoodItems={fetchFoodItems}
           />
         )}
-
-{currentView === 'orders' && <OrdersView restaurantId={restaurantId} />}
+        {currentView === 'orders' && <OrdersView restaurantId={restaurantId} />}
       </div>
+      {(error || categoryError || foodError) && (
+        <Popup 
+          message={error || categoryError || foodError || 'Data Not Found'}
+          onClose={() => {
+            setError('');
+            setCategoryError('');
+            setFoodError('');
+          }}
+        />
+      )}
     </div>
   );
 };

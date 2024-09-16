@@ -31,7 +31,7 @@ const FoodItemsView = ({ foodItems, restaurantId, setFoodItems, fetchFoodItems }
         const data = await getCategories(restaurantId);
         setCategories(data);
       } catch (err) {
-        setPopupMessage('Failed to load categories');
+        
       }
     };
 
