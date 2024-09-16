@@ -11,6 +11,7 @@ const Signup = ({ onSignup }) => {
   const { register, handleSubmit, setError, formState: { errors } } = useForm();
   const [popupMessage, setPopupMessage] = React.useState('');
   const navigate = useNavigate();
+
   const onSubmit = async (data) => {
     const validationErrors = validateSignup(data);
     if (Object.keys(validationErrors).length > 0) {
@@ -31,7 +32,7 @@ const Signup = ({ onSignup }) => {
       }, 500);
     } catch (error) {
       if (error.response.data && error.response.data) {
-        setPopupMessage( error.response.data.message);
+        setPopupMessage(error.response.data.message);
       } else {
         setPopupMessage('Signup failed! Please check your connection.');
       }
@@ -61,6 +62,13 @@ const Signup = ({ onSignup }) => {
         <FormInput label="Phone" type="text" register={register} name="phone" errors={errors} />
         <button type="submit" className="btn btn-primary">Sign Up</button>
       </form>
+      <button 
+        type="button" 
+        className="btn btn-secondary" 
+        onClick={() => navigate('/login')}
+      >
+        Already have an account? Login
+      </button>
       <Popup message={popupMessage} onClose={closePopup} />
     </div>
   );

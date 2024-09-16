@@ -95,6 +95,13 @@ const Login = ({ onLogin }) => {
         />
         <button type="submit" className="btn btn-primary">Login</button>
       </form>
+      <button 
+        type="button" 
+        className="btn btn-secondary" 
+        onClick={() => navigate('/signup')}
+      >
+        Sign Up
+      </button>
       <Popup message={popupMessage} onClose={closePopup} />
     </div>
   );

@@ -89,7 +89,7 @@ const OrdersView = ({ restaurantId }) => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
     const fromEmail = storedUser.email;
     const contactData = {
-      restaurantEmail: contactOrder.restaurantEmail,
+      restaurantEmail: "akashtiwari722003@gmail.com",
       subject,
       message,
       fromEmail,
