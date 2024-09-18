@@ -121,9 +121,9 @@ const CartPage = () => {
               <div className="item-actions">
                 <button onClick={() => handleDelete(item.cartItemId)} className="delete-button">Delete</button>
                 <div className="quantity-controls">
-                  <button onClick={() => handleQuantityChange(item.cartItemId, -1)} className="quantity-button">-</button>
+                  <button className = "quantity-button quantity-sub" onClick={() => handleQuantityChange(item.cartItemId, -1)}>-</button>
                   <p>Quantity: {item.quantity}</p>
-                  <button onClick={() => handleQuantityChange(item.cartItemId, 1)} className="quantity-button">+</button>
+                  <button className = "quantity-button quantity-add" onClick={() => handleQuantityChange(item.cartItemId, 1)}>+</button>
                 </div>
               </div>
             </li>

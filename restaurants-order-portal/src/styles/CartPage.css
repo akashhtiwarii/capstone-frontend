@@ -84,13 +84,21 @@
 }
 
 .quantity-button {
-  background-color: #3498db;
-  color: #fff;
   border: none;
   padding: 8px 12px;
   margin: 0 5px;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.quantity-add {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.quantity-sub {
+  background-color: #ff0015;
+  color: #fff;
 }
 
 .quantity-button:hover {

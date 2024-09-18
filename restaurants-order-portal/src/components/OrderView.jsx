@@ -24,7 +24,6 @@ const OrdersView = ({ restaurantId }) => {
         setOrders(data);
         setFilteredOrders(data);
       } catch (err) {
-        console.error('Failed to fetch orders:', err);
         setError(true);
         setPopupMessage(err.response?.data?.message || 'An unknown error occurred.');
       } finally {
@@ -116,7 +115,6 @@ const OrdersView = ({ restaurantId }) => {
     <div className="orders-view">
       {popupMessage && <Popup message={popupMessage} onClose={handleClosePopup} />}
 
-      {/* Reusable Contact Support Popup */}
       {showContactPopup && (
         <ContactSupportPopup
           order={contactOrder}
@@ -164,7 +162,6 @@ const OrdersView = ({ restaurantId }) => {
             ) : (
               <>
                 <button className="update-order-btn" onClick={() => handleUpdateOrder(order)}>Update Order</button>
-                {/* Contact Support Button */}
                 <button className="contact-support-btn" onClick={() => handleContactSupport(order)}>Contact Support</button>
               </>
             )}
