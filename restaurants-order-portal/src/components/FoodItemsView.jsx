@@ -62,12 +62,18 @@ const FoodItemsView = ({ foodItems, restaurantId, setFoodItems, fetchFoodItems }
       setIsAdding(false);
       fetchFoodItems();
     } catch (err) {
-      const errorData = err.response?.data || {};
-      if (typeof errorData === 'object') {
-        const errorMessages = Object.values(errorData).join(', ');
-        setPopupMessage(`${errorMessages}`);
+      if (err.response && err.response.data) {
+        const responseData = err.response.data;
+        if (typeof responseData === 'object' && !responseData.message) {
+          const errorMessages = Object.values(responseData).join(', ');
+          setPopupMessage(`Validation Errors: ${errorMessages}`);
+        } else if (responseData.message) {
+          setPopupMessage(responseData.message);
+        } else {
+          setPopupMessage('An error occurred while adding the Food Item.');
+        }
       } else {
-        setPopupMessage('An unexpected error occurred');
+        setPopupMessage('An error occurred while adding the Food Item.');
       }
     }
   };
@@ -95,8 +101,19 @@ const FoodItemsView = ({ foodItems, restaurantId, setFoodItems, fetchFoodItems }
       setEditingFoodId(null);
       fetchFoodItems();
     } catch (err) {
-      const message = err.response?.data || 'Failed to update food item';
-      setPopupMessage(message);
+      if (err.response && err.response.data) {
+        const responseData = err.response.data;
+        if (typeof responseData === 'object' && !responseData.message) {
+          const errorMessages = Object.values(responseData).join(', ');
+          setPopupMessage(`Validation Errors: ${errorMessages}`);
+        } else if (responseData.message) {
+          setPopupMessage(responseData.message);
+        } else {
+          setPopupMessage('An error occurred while updating the Food Item.');
+        }
+      } else {
+        setPopupMessage('An error occurred while updating the Food Item.');
+      }
     }
   };
 

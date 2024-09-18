@@ -192,7 +192,7 @@ export const addFoodItem = async (formData) => {
     });
     return response.data;
   } catch (err) {
-    throw err.response;
+    throw err;
   }
 };
 
