@@ -72,7 +72,6 @@ const OrdersView = ({ restaurantId }) => {
         setPopupMessage(response.message || 'Order updated successfully');
         setSelectedOrder(null);
       } catch (err) {
-        console.error('Failed to update order:', err);
         setError(true);
         setPopupMessage(err.response?.data?.message || 'Failed to update the order.');
       }
@@ -144,31 +143,31 @@ const OrdersView = ({ restaurantId }) => {
                 <div key={i} className="order-detail">
                   <p><strong>Food:</strong> {detail.foodName}</p>
                   <p><strong>Quantity:</strong> {detail.quantity}</p>
-                  <p><strong>Price:</strong> ${detail.price}</p>
+                  <p><strong>Price:</strong> ₹{detail.price}</p>
                 </div>
               ))}
             </div>
-            {selectedOrder && selectedOrder.orderId === order.orderId ? (
-              <div className="update-status">
-                <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)}>
-                  <option value="">Select Status</option>
-                  <option value="PENDING">Pending</option>
-                  <option value="ONGOING">Ongoing</option>
-                  <option value="COMPLETED">Completed</option>
-                </select>
-                <button onClick={handleStatusChange} className="update-status-save-btn">Save</button>
-                <button onClick={() => setSelectedOrder(null)} className="update-status-cancel-btn">Cancel</button>
-              </div>
-            ) : (
-              <>
+            {order.status !== 'COMPLETED' && (
+              selectedOrder && selectedOrder.orderId === order.orderId ? (
+                <div className="update-status">
+                  <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)}>
+                    <option value="">Select Status</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="ONGOING">Ongoing</option>
+                    <option value="COMPLETED">Completed</option>
+                  </select>
+                  <button onClick={handleStatusChange} className="update-status-save-btn">Save</button>
+                  <button onClick={() => setSelectedOrder(null)} className="update-status-cancel-btn">Cancel</button>
+                </div>
+              ) : (
                 <button className="update-order-btn" onClick={() => handleUpdateOrder(order)}>Update Order</button>
-                <button className="contact-support-btn" onClick={() => handleContactSupport(order)}>Contact Support</button>
-              </>
+              )
             )}
           </div>
         ))
-      )}
-    </div>
+      )
+      }
+      </div>
   );
 };
 

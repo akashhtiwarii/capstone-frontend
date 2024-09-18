@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/ContactSupportPopup.css';
 
-const ContactSupportPopup = ({ order, onClose, onSubmit, isSending }) => {
+const ContactSupportPopup = ({ onClose, onSubmit, isSending }) => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
 
@@ -15,7 +15,7 @@ const ContactSupportPopup = ({ order, onClose, onSubmit, isSending }) => {
 
   return (
     <div className="contact-support-popup">
-      <h2>Contact Support for {order.restaurantName}</h2>
+      <h2>Contact Support</h2>
       <label>Subject:</label>
       <input
         type="text"

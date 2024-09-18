@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUserOrders, cancelOrder, contactSupport } from '../services/apiService';
+import { getUserOrders, cancelOrder } from '../services/apiService';
 import Popup from '../components/Popup';
-import ContactSupportPopup from '../components/ContactSupportPopup';
 import AppBar from '../components/AppBar'; 
 import '../styles/UserOrderPage.css';
 
@@ -13,10 +12,7 @@ const UserOrderPage = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [filter, setFilter] = useState('ALL');
-  const [showContactPopup, setShowContactPopup] = useState(false);
-  const [contactOrder, setContactOrder] = useState(null);
-  const [isSending, setIsSending] = useState(false);
-
+  
   const navigate = useNavigate();
 
   const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
@@ -54,7 +50,6 @@ const UserOrderPage = () => {
   const closePopup = () => {
     setError(null);
     setSuccessMessage(null);
-    setShowContactPopup(false);
   };
 
   const handleCancelOrder = async (orderId) => {
@@ -99,32 +94,6 @@ const UserOrderPage = () => {
     return <span className="timer">Time left to cancel: {remainingTime} seconds</span>;
   };
 
-  const handleContactSupport = (order) => {
-    setContactOrder(order);
-    setShowContactPopup(true);
-  };
-
-  const submitContactForm = async ({ subject, message }) => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    const fromEmail = storedUser.email;
-    const contactData = {
-      restaurantEmail: contactOrder.restaurantEmail,
-      subject,
-      message,
-      fromEmail,
-    };
-
-    try {
-      setIsSending(true);
-      await contactSupport(contactData);
-      setSuccessMessage('Support contacted successfully');
-      setIsSending(false);
-      setShowContactPopup(false); 
-    } catch (err) {
-      setError(err?.response?.data?.message || 'Failed to contact support');
-      setIsSending(false);
-    }
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -137,14 +106,6 @@ const UserOrderPage = () => {
       <div className="user-order-page">
       {(error || successMessage) && (
         <Popup message={error || successMessage} onClose={closePopup} />
-      )}
-      {showContactPopup && (
-        <ContactSupportPopup
-          order={contactOrder}
-          onClose={() => setShowContactPopup(false)}
-          onSubmit={submitContactForm}
-          isSending={isSending}
-        />
       )}
 
       <div className="filter-buttons">
@@ -175,8 +136,6 @@ const UserOrderPage = () => {
               ) : (
                 <p>Cannot cancel order</p>
               )}
-
-              <button onClick={() => handleContactSupport(order)}>Contact Support</button>
 
               <div className="food-items">
                 {order.foodItemOutDTOS.map((foodItem, idx) => (

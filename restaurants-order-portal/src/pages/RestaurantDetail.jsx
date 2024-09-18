@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import RestaurantProfile from '../components/RestaurantProfile';
 import MenuView from '../components/MenuView';
 import CategoriesView from '../components/CategoriesView';
 import FoodItemsView from '../components/FoodItemsView';
 import OrdersView from '../components/OrderView';
+import ContactSupportPopup from '../components/ContactSupportPopup';
 import { getRestaurantDetails, getCategories, getFoodItems } from '../services/apiService';
-import Popup from '../components/Popup';  
+import Popup from '../components/Popup';
 import '../styles/RestaurantDetail.css';
+import { contactSupport } from '../services/apiService';
 
 const RestaurantDetail = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { restaurantId } = location.state;
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +24,9 @@ const RestaurantDetail = () => {
   const [foodItems, setFoodItems] = useState([]);
   const [categoryError, setCategoryError] = useState('');
   const [foodError, setFoodError] = useState('');
+  const [showContactPopup, setShowContactPopup] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [popupMessage, setPopupMessage] = useState(null);
 
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
@@ -74,13 +80,49 @@ const RestaurantDetail = () => {
     { label: 'Orders', view: 'orders', onClick: () => setCurrentView('orders') },
   ];
 
+  const handleContactSupport = () => {
+    setShowContactPopup(true);
+  };
+
+  const handleOwnerDashboardClick = () => {
+    navigate('/owner-dashboard');
+  };
+
+  const submitContactForm = async ({ subject, message }) => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const fromEmail = storedUser.email;
+    const contactData = {
+      fromEmail,
+      subject,
+      message
+    };
+
+    try {
+      setIsSending(true);
+      await contactSupport(contactData);
+      setPopupMessage('Support contacted successfully');
+      setIsSending(false);
+      setShowContactPopup(false);
+    } catch (err) {
+      setError(true);
+      setPopupMessage(err?.response?.data?.message || 'Failed to contact support');
+      setIsSending(false);
+    }
+  };
+
   if (loading) {
     return <p>Loading restaurant details...</p>;
   }
 
   return (
     <div className="restaurant-detail">
-      <Sidebar menuItems={menuItems} currentView={currentView} setCurrentView={setCurrentView} />
+      <Sidebar
+        menuItems={menuItems}
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        onContactSupport={handleContactSupport}
+        onOwnerDashboardClick={handleOwnerDashboardClick}
+      />
       <div className="content">
         {currentView === 'profile' && restaurant && (
           <RestaurantProfile restaurant={restaurant} setRestaurant={setRestaurant} />
@@ -104,14 +146,22 @@ const RestaurantDetail = () => {
         )}
         {currentView === 'orders' && <OrdersView restaurantId={restaurantId} />}
       </div>
-      {(error || categoryError || foodError) && (
-        <Popup 
-          message={error || categoryError || foodError || 'Data Not Found'}
+      {(error || categoryError || foodError || popupMessage) && (
+        <Popup
+          message={error || categoryError || foodError || popupMessage || 'Data Not Found'}
           onClose={() => {
             setError('');
             setCategoryError('');
             setFoodError('');
+            setPopupMessage('');
           }}
+        />
+      )}
+      {showContactPopup && (
+        <ContactSupportPopup
+          onClose={() => setShowContactPopup(false)}
+          onSubmit={submitContactForm}
+          isSending={isSending}
         />
       )}
     </div>

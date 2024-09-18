@@ -146,7 +146,6 @@ const Login = ({ onLogin }) => {
               />
               <div className="forgot-password-buttons">
                 <button onClick={handleForgotPasswordSubmit} className="btn btn-primary">Submit</button>
-                <button onClick={() => setShowForgotPasswordPopup(false)} className="btn btn-secondary">Cancel</button>
               </div>
             </>
           }

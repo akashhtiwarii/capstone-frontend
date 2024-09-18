@@ -325,10 +325,9 @@ export const updateRestaurant = async (formData) => {
 export const contactSupport = async ({ restaurantEmail, subject, message, fromEmail }) => {
   try {
     const response = await axios.post('http://localhost:8081/user/contact-us', {
-      restaurantEmail,
+      fromEmail,
       subject,
-      message,
-      fromEmail
+      message
     });
     return response.data;
   } catch (error) {
