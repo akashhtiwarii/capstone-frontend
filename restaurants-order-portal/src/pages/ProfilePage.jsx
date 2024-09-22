@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/ProfilePage.css';
 import { getUserProfile, rechargeWallet, updateUserProfile } from '../services/apiService';
 import Popup from '../components/Popup';
+import AppBar from '../components/AppBar';
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -82,8 +83,15 @@ const ProfilePage = () => {
   if (loading) return <p>Loading profile...</p>;
   if (error) return <p>There was an error loading the profile.</p>;
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
   return (
-    <div className="profile-page">
+    <div className="user-profile-page">
+      {user.role === 'USER' && <AppBar user={user} handleLogout={handleLogout} />}
+      <div className="profile-page">
       <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
       {profile && (
         <div className="profile-details">
@@ -126,78 +134,31 @@ const ProfilePage = () => {
               <span>{profile.phone}</span>
             )}
           </div>
-          <div className="profile-field">
-            <strong>Address:</strong>
-            {isEditing ? (
-              <input
-                type="text"
-                name="address"
-                value={profile.address}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.address ? profile.address : 'Address not added'}</span>
-            )}
-          </div>
-          <div className="profile-field">
-            <strong>City:</strong>
-            {isEditing ? (
-              <input
-                type="text"
-                name="city"
-                value={profile.city}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.city ? profile.city : 'City not added'}</span>
-            )}
-          </div>
-          <div className="profile-field">
-            <strong>Pincode:</strong>
-            {isEditing ? (
-              <input
-                type="number"
-                name="pincode"
-                value={profile.pincode}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.pincode !== 0 ? profile.pincode : 'pincode not added'}</span>
-            )}
-          </div>
-          <div className="profile-field">
-            <strong>State:</strong>
-            {isEditing ? (
-              <input
-                type="text"
-                name="state"
-                value={profile.state}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.state ? profile.state : 'state not added'}</span>
-            )}
-          </div>
-          <div className="profile-field">
-            <strong>Wallet Amount:</strong>
-            <span>₹{profile.walletAmount.toFixed(2)}</span>
-          </div>
-          <div className="recharge-wallet">
-            <input
-              type="number"
-              value={rechargeAmount}
-              onChange={(e) => setRechargeAmount(e.target.value)}
-              placeholder="Enter amount"
-            />
-            <button className="recharge-button" onClick={handleRechargeWallet}>
-              Recharge Wallet
-            </button>
-          </div>
+          {user.role !== 'OWNER' && (
+            <>
+              <div className="profile-field">
+                <strong>Wallet Amount:</strong>
+                <span>₹{profile.walletAmount.toFixed(2)}</span>
+              </div>
+              <div className="recharge-wallet">
+                <input
+                  type="number"
+                  value={rechargeAmount}
+                  onChange={(e) => setRechargeAmount(e.target.value)}
+                  placeholder="Enter amount"
+                />
+                <button className="recharge-button" onClick={handleRechargeWallet}>
+                  Recharge Wallet
+                </button>
+              </div>
+            </>
+          )}
           <button className="edit-button" onClick={handleEditToggle}>
             {isEditing ? 'Save Changes' : 'Update Profile'}
           </button>
         </div>
       )}
+    </div>
     </div>
   );
 };

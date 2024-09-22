@@ -1,0 +1,77 @@
+.address-book-page {
+    padding: 20px;
+  }
+  
+  .address-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .address-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .update-button, .delete-button, .add-address-button {
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .update-button {
+    background-color: #007bff;
+  }
+
+  .delete-button {
+    background-color: #e74c3c;
+  }
+
+  .update-button:hover, .delete-button:hover, .add-address-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .form-container {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+  }
+  
+  .form-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-container label {
+    margin-bottom: 10px;
+  }
+  
+  .form-container input {
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .submit-button, .cancel-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .cancel-button {
+    background-color: #6c757d;
+  }
+  
+  .submit-button:hover, .cancel-button:hover {
+    background-color: #0056b3;
+  }
+  

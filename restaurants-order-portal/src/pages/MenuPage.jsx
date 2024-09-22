@@ -4,6 +4,7 @@ import '../styles/MenuPage.css';
 import { getFoodItemsByRestaurant, getCategoriesByRestaurant } from '../services/apiService';
 import { useParams, useNavigate } from 'react-router-dom';
 import Popup from '../components/Popup'; 
+import AppBar from '../components/AppBar';
 
 const MenuPage = () => {
   const { restaurantId } = useParams();
@@ -12,9 +13,15 @@ const MenuPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
     const fetchMenuData = async () => {
       try {
         const categoryData = await getCategoriesByRestaurant(restaurantId);
@@ -24,7 +31,7 @@ const MenuPage = () => {
         setFoodItems(foodData);
       } catch (err) {
         console.error('Failed to fetch menu data:', err);
-        setPopupMessage("Resource Not Available");
+        setPopupMessage("Menu Not Available");
         setError(true);
       } finally {
         setLoading(false);
@@ -35,10 +42,11 @@ const MenuPage = () => {
   }, [restaurantId]);
 
   const handleAddToCart = async (foodItem) => { 
-    const user = JSON.parse(localStorage.getItem('user')); 
     if (!user) {
       setPopupMessage('Please log in to add items to your cart.');
-      navigate('/login');
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
       return;
     }
 
@@ -67,14 +75,22 @@ const MenuPage = () => {
   const closePopup = () => {
     setPopupMessage('');
   };
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/');
+  };
 
   if (loading) {
     return <p>Loading menu...</p>;
   }
 
   return (
-    <div className="menu-page">
+    <div className="menu-items-page">
+      <AppBar user={user} handleLogout={handleLogout} />
+      <div className="menu-page">
       {popupMessage && <Popup message={popupMessage} onClose={closePopup} />}
+      
       {categories.map((category) => (
         <div key={category.categoryId} className="menu-category-section">
           <h2>{category.name}</h2>
@@ -101,6 +117,7 @@ const MenuPage = () => {
           </ul>
         </div>
       ))}
+    </div>
     </div>
   );
 };

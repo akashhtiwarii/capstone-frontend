@@ -23,6 +23,47 @@ export const loginUser = async (userData) => {
   }
 };
 
+export const getAddressList = async (userId) => {
+  try {
+    const response = await axios.get(`${USER_API_URL}/address`, {
+      params: { userId },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const deleteAddress = async (userId, addressId) => {
+  try {
+    const response = await axios.delete(`${USER_API_URL}/address/delete`, {
+      params: { userId, addressId },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const updateAddress = async (addressData) => {
+  try {
+    const response = await axios.put(`${USER_API_URL}/address/update`, addressData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const addAddress = async (addressData) => {
+  try {
+    const response = await axios.post(`${USER_API_URL}/address/add`, addressData);
+    return response.data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+};
+
+
 export const rechargeWallet = async (userId, amount) => {
   try {
     const response = await axios.put(`${USER_API_URL}/wallet/recharge`, null, {
@@ -151,7 +192,7 @@ export const addFoodItem = async (formData) => {
     });
     return response.data;
   } catch (err) {
-    throw err.response;
+    throw err;
   }
 };
 
@@ -232,10 +273,10 @@ export const updateCartItemQuantity = async (cartItemId, delta) => {
   }
 };
 
-export const placeOrder = async (userId) => {
+export const placeOrder = async (userId, addressId) => {
   try {
     const response = await axios.post(`${ORDER_API_URL}/order/add`, null, {
-      params: { userId },
+      params: { userId, addressId },
     });
     return response.data;
   } catch (err) {
@@ -245,6 +286,7 @@ export const placeOrder = async (userId) => {
     throw err;
   }
 };
+
 
 export const cancelOrder = async (orderId) => {
   try {
@@ -277,5 +319,29 @@ export const updateRestaurant = async (formData) => {
     return response.data;
   } catch (err) {
     throw err;
+  }
+};
+
+export const contactSupport = async ({ restaurantEmail, subject, message, fromEmail }) => {
+  try {
+    const response = await axios.post('http://localhost:8081/user/contact-us', {
+      fromEmail,
+      subject,
+      message
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await axios.post(`${USER_API_URL}/forgotpassword`, null, {
+      params: { email },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
   }
 };

@@ -47,14 +47,21 @@ const AddRestaurantPage = () => {
       }, 2000);
     } catch (err) {
       if (err.response && err.response.data) {
-        const backendErrors = err.response.data;
-        const errorMessages = Object.values(backendErrors).join(', '); 
-        setPopupMessage(`Validation Errors: ${errorMessages}`); 
+        const responseData = err.response.data;
+        if (typeof responseData === 'object' && !responseData.message) {
+          const errorMessages = Object.values(responseData).join(', ');
+          setPopupMessage(`Validation Errors: ${errorMessages}`);
+        } else if (responseData.message) {
+          setPopupMessage(responseData.message);
+        } else {
+          setPopupMessage('An error occurred while adding the restaurant.');
+        }
       } else {
         setPopupMessage('An error occurred while adding the restaurant.');
       }
     }
   };
+  
 
   return (
     <div className="add-restaurant-page">

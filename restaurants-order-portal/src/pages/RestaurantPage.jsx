@@ -35,7 +35,7 @@ const RestaurantPage = () => {
           navigate('/owner-dashboard');
         }
       } catch (e) {
-        console.error('Failed to parse user from localStorage:', e);
+        setError("User Not Logged In");
         setUser(null);
       }
     }

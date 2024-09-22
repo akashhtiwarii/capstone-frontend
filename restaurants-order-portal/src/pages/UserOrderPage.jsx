@@ -1,96 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { getUserOrders, cancelOrder } from '../services/apiService'; 
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getUserOrders, cancelOrder } from '../services/apiService';
 import Popup from '../components/Popup';
+import AppBar from '../components/AppBar'; 
 import '../styles/UserOrderPage.css';
 
 const UserOrderPage = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [filter, setFilter] = useState('ALL');
-  const [timers, setTimers] = useState({});
+  
+  const navigate = useNavigate();
+
+  const user = useMemo(() => JSON.parse(localStorage.getItem('user')), []);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const userId = JSON.parse(storedUser).userId;
-
-      const fetchOrders = async () => {
-        try {
-          const data = await getUserOrders(userId);
-
-          // Initialize timers for orders that can still be cancelled
-          const initialTimers = {};
-          data.forEach(order => {
-            if (order.status === 'PENDING') {
-              const orderTime = new Date(order.orderTime);
-              const currentTime = new Date();
-              const timeElapsed = (currentTime - orderTime) / 1000; // Time elapsed in seconds
-              const timeRemaining = 30 - timeElapsed; // Time remaining to cancel
-
-              if (timeRemaining > 0) {
-                initialTimers[order.orderId] = {
-                  timeRemaining: Math.floor(timeRemaining),
-                  intervalId: null,
-                };
-              }
-            }
-          });
-
-          setOrders(data);
-          setFilteredOrders(data);
-          setTimers(initialTimers);
-          setLoading(false);
-        } catch (err) {
-          setError(err?.response?.data?.message || "An unexpected error occurred");
-          setLoading(false);
-        }
-      };
-
-      fetchOrders();
-    } else {
-      setError("User not found");
-      setLoading(false);
+    if (!user) {
+      navigate('/login');
+      return;
     }
-  }, []);
 
-  useEffect(() => {
-    const timerIntervals = {};
-
-    // Only start timers for orders with time remaining > 0
-    Object.keys(timers).forEach(orderId => {
-      const orderTimer = timers[orderId];
-      
-      if (orderTimer && orderTimer.timeRemaining > 0) {
-        timerIntervals[orderId] = setInterval(() => {
-          setTimers(prevTimers => {
-            const newTimeRemaining = prevTimers[orderId].timeRemaining - 1;
-            
-            // If the time is up, clear the timer
-            if (newTimeRemaining <= 0) {
-              clearInterval(timerIntervals[orderId]);
-              return {
-                ...prevTimers,
-                [orderId]: { ...prevTimers[orderId], timeRemaining: 0 }
-              };
-            }
-            
-            // Otherwise, update the time remaining
-            return {
-              ...prevTimers,
-              [orderId]: { ...prevTimers[orderId], timeRemaining: newTimeRemaining }
-            };
-          });
-        }, 1000);
+    const fetchOrders = async () => {
+      try {
+        const data = await getUserOrders(user.userId);
+        setOrders(data);
+        setFilteredOrders(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err?.response?.data?.message || 'An unexpected error occurred');
+        setLoading(false);
       }
-    });
-
-    return () => {
-      // Clear all timers on component unmount
-      Object.values(timerIntervals).forEach(clearInterval);
     };
-  }, [timers]);
+
+    fetchOrders();
+  }, [user, navigate]);
 
   const handleFilterChange = (status) => {
     setFilter(status);
@@ -102,27 +48,66 @@ const UserOrderPage = () => {
   };
 
   const closePopup = () => {
-    setError(null); 
+    setError(null);
+    setSuccessMessage(null);
   };
 
   const handleCancelOrder = async (orderId) => {
     try {
-      const response = await cancelOrder(orderId); // Call the API service function
-      alert(response);
-      const updatedOrders = orders.map(order => 
+      await cancelOrder(orderId);
+      setSuccessMessage('Order cancelled successfully');
+      const updatedOrders = orders.map(order =>
         order.orderId === orderId ? { ...order, status: 'CANCELLED' } : order
       );
       setOrders(updatedOrders);
       setFilteredOrders(updatedOrders);
     } catch (err) {
-      const errorMsg = err?.message || "Failed to cancel the order";
+      const errorMsg = err?.response?.data?.message || 'Failed to cancel the order';
       setError(errorMsg);
     }
   };
 
+  const calculateRemainingTime = (orderDate) => {
+    const now = new Date();
+    const orderTime = new Date(orderDate);
+    const timeDifferenceInSeconds = 30 - Math.floor((now - orderTime) / 1000);
+    return timeDifferenceInSeconds > 0 ? timeDifferenceInSeconds : 0;
+  };
+
+  const Timer = ({ orderDate, onExpire }) => {
+    const [remainingTime, setRemainingTime] = useState(calculateRemainingTime(orderDate));
+
+    useEffect(() => {
+      const timerInterval = setInterval(() => {
+        const newRemainingTime = calculateRemainingTime(orderDate);
+        setRemainingTime(newRemainingTime);
+
+        if (newRemainingTime === 0) {
+          clearInterval(timerInterval);
+          onExpire();
+        }
+      }, 1000);
+
+      return () => clearInterval(timerInterval);
+    }, [orderDate, onExpire]);
+
+    return <span className="timer">Time left to cancel: {remainingTime} seconds</span>;
+  };
+
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
   return (
-    <div className="user-order-page">
-      <Popup message={error} onClose={closePopup} />
+    <div className="users-orders-page">
+      <AppBar user={user} handleLogout={handleLogout} />
+      <div className="user-order-page">
+      {(error || successMessage) && (
+        <Popup message={error || successMessage} onClose={closePopup} />
+      )}
+
       <div className="filter-buttons">
         <button onClick={() => handleFilterChange('ALL')} className={filter === 'ALL' ? 'active' : ''}>All</button>
         <button onClick={() => handleFilterChange('PENDING')} className={filter === 'PENDING' ? 'active' : ''}>Pending</button>
@@ -140,14 +125,18 @@ const UserOrderPage = () => {
             <div key={index} className="order-card">
               <h2>{order.restaurantName}</h2>
               <p><strong>Status: {order.status}</strong></p>
-              {order.status === 'PENDING' && timers[order.orderId]?.timeRemaining > 0 ? (
-                <div className="cancel-section">
+              {order.status === 'PENDING' && calculateRemainingTime(order.orderTime) > 0 ? (
+                <>
+                  <Timer
+                    orderDate={order.orderTime}
+                    onExpire={() => setOrders(orders.map(o => o.orderId === order.orderId ? { ...o, status: 'EXPIRED' } : o))}
+                  />
                   <button onClick={() => handleCancelOrder(order.orderId)}>Cancel Order</button>
-                  <p>Time left to cancel: {timers[order.orderId].timeRemaining}s</p>
-                </div>
+                </>
               ) : (
                 <p>Cannot cancel order</p>
               )}
+
               <div className="food-items">
                 {order.foodItemOutDTOS.map((foodItem, idx) => (
                   <div key={idx} className="food-item">
@@ -161,6 +150,7 @@ const UserOrderPage = () => {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 };

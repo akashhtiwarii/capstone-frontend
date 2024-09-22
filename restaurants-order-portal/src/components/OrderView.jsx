@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getRestaurantOrders, updateOrderStatus } from '../services/apiService'; 
+import { getRestaurantOrders, updateOrderStatus, contactSupport } from '../services/apiService'; 
 import Popup from './Popup';
+import ContactSupportPopup from '../components/ContactSupportPopup'; 
 import '../styles/OrdersView.css';
 
 const OrdersView = ({ restaurantId }) => {
@@ -12,6 +13,9 @@ const OrdersView = ({ restaurantId }) => {
   const [filter, setFilter] = useState('ALL');
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [newStatus, setNewStatus] = useState('');
+  const [showContactPopup, setShowContactPopup] = useState(false);
+  const [contactOrder, setContactOrder] = useState(null);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -20,7 +24,6 @@ const OrdersView = ({ restaurantId }) => {
         setOrders(data);
         setFilteredOrders(data);
       } catch (err) {
-        console.error('Failed to fetch orders:', err);
         setError(true);
         setPopupMessage(err.response?.data?.message || 'An unknown error occurred.');
       } finally {
@@ -69,10 +72,37 @@ const OrdersView = ({ restaurantId }) => {
         setPopupMessage(response.message || 'Order updated successfully');
         setSelectedOrder(null);
       } catch (err) {
-        console.error('Failed to update order:', err);
         setError(true);
         setPopupMessage(err.response?.data?.message || 'Failed to update the order.');
       }
+    }
+  };
+
+  const handleContactSupport = (order) => {
+    setContactOrder(order);
+    setShowContactPopup(true);
+  };
+
+  const submitContactForm = async ({ subject, message }) => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const fromEmail = storedUser.email;
+    const contactData = {
+      restaurantEmail: "akashtiwari722003@gmail.com",
+      subject,
+      message,
+      fromEmail,
+    };
+
+    try {
+      setIsSending(true);
+      await contactSupport(contactData);
+      setPopupMessage('Support contacted successfully');
+      setIsSending(false);
+      setShowContactPopup(false); 
+    } catch (err) {
+      setError(true);
+      setPopupMessage(err?.response?.data?.message || 'Failed to contact support');
+      setIsSending(false);
     }
   };
 
@@ -83,6 +113,16 @@ const OrdersView = ({ restaurantId }) => {
   return (
     <div className="orders-view">
       {popupMessage && <Popup message={popupMessage} onClose={handleClosePopup} />}
+
+      {showContactPopup && (
+        <ContactSupportPopup
+          order={contactOrder}
+          onClose={() => setShowContactPopup(false)}
+          onSubmit={submitContactForm}
+          isSending={isSending}
+        />
+      )}
+
       <div className="filter-buttons">
         <button className={filter === 'ALL' ? 'active' : ''} onClick={() => handleFilterChange('ALL')}>All</button>
         <button className={filter === 'PENDING' ? 'active' : ''} onClick={() => handleFilterChange('PENDING')}>Pending</button>
@@ -103,28 +143,31 @@ const OrdersView = ({ restaurantId }) => {
                 <div key={i} className="order-detail">
                   <p><strong>Food:</strong> {detail.foodName}</p>
                   <p><strong>Quantity:</strong> {detail.quantity}</p>
-                  <p><strong>Price:</strong> ${detail.price}</p>
+                  <p><strong>Price:</strong> ₹{detail.price}</p>
                 </div>
               ))}
             </div>
-            {selectedOrder && selectedOrder.orderId === order.orderId ? (
-              <div className="update-status">
-                <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)}>
-                  <option value="">Select Status</option>
-                  <option value="PENDING">Pending</option>
-                  <option value="ONGOING">Ongoing</option>
-                  <option value="COMPLETED">Completed</option>
-                </select>
-                <button onClick={handleStatusChange} className = "update-status-save-btn">Save</button>
-                <button onClick={() => setSelectedOrder(null)} className = "update-status-cancel-btn">Cancel</button>
-              </div>
-            ) : (
-              <button className="update-order-btn" onClick={() => handleUpdateOrder(order)}>Update Order</button>
+            {order.status !== 'COMPLETED' && (
+              selectedOrder && selectedOrder.orderId === order.orderId ? (
+                <div className="update-status">
+                  <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)}>
+                    <option value="">Select Status</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="ONGOING">Ongoing</option>
+                    <option value="COMPLETED">Completed</option>
+                  </select>
+                  <button onClick={handleStatusChange} className="update-status-save-btn">Save</button>
+                  <button onClick={() => setSelectedOrder(null)} className="update-status-cancel-btn">Cancel</button>
+                </div>
+              ) : (
+                <button className="update-order-btn" onClick={() => handleUpdateOrder(order)}>Update Order</button>
+              )
             )}
           </div>
         ))
-      )}
-    </div>
+      )
+      }
+      </div>
   );
 };
 

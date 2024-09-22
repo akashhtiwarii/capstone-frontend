@@ -70,9 +70,19 @@ const RestaurantProfile = ({ setRestaurant }) => {
       const updatedRestaurantDetails = await getRestaurantDetails(restaurant.restaurantId);
       setRestaurantState(updatedRestaurantDetails);
     } catch (err) {
-      const errorData = err.response?.data || {};
-      const errorMessages = Object.values(errorData).join(', ');
-      setPopupMessage(`Validation Errors: ${errorMessages}`);
+      if (err.response && err.response.data) {
+        const responseData = err.response.data;
+        if (typeof responseData === 'object' && !responseData.message) {
+          const errorMessages = Object.values(responseData).join(', ');
+          setPopupMessage(`Validation Errors: ${errorMessages}`);
+        } else if (responseData.message) {
+          setPopupMessage(responseData.message);
+        } else {
+          setPopupMessage('An error occurred while adding the restaurant.');
+        }
+      } else {
+        setPopupMessage('An error occurred while adding the restaurant.');
+      }
     }
   };
 
