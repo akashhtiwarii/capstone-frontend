@@ -35,7 +35,6 @@ const OwnerDashboard = () => {
 
           setRestaurants(data);
         } catch (err) {
-          console.error('Failed to fetch restaurants:', err);
           setError(true);
           setErrorMessage(err.response?.data.message);
           setShowPopup(true);

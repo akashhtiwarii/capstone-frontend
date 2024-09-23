@@ -26,10 +26,10 @@ const ProfilePage = () => {
       try {
         const data = await getUserProfile(user.userId);
         setProfile(data);
-        setLoading(false);
       } catch (err) {
-        console.error('Error fetching profile:', err);
+        setPopupMessage('Error fetching profile: ' + err.message);
         setError(true);
+      } finally {
         setLoading(false);
       }
     };
@@ -45,11 +45,9 @@ const ProfilePage = () => {
         setPopupMessage(response.message);
         setIsEditing(false);  
       } catch (err) {
-        console.error('Error updating profile:', err);
         const errorMessages = err.response?.data
           ? Object.values(err.response.data).join(', ')
           : 'Failed to update profile';
-
         setPopupMessage(errorMessages);
       }
     } else {
@@ -75,7 +73,6 @@ const ProfilePage = () => {
       setProfile({ ...profile, walletAmount: profile.walletAmount + amount });
       setRechargeAmount('');
     } catch (err) {
-      console.error('Error recharging wallet:', err);
       setPopupMessage('Failed to recharge wallet.');
     }
   };
@@ -92,73 +89,73 @@ const ProfilePage = () => {
     <div className="user-profile-page">
       {user.role === 'USER' && <AppBar user={user} handleLogout={handleLogout} />}
       <div className="profile-page">
-      <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
-      {profile && (
-        <div className="profile-details">
-          <div className="profile-field">
-            <strong>Name:</strong>
-            {isEditing ? (
-              <input
-                type="text"
-                name="name"
-                value={profile.name}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.name}</span>
-            )}
-          </div>
-          <div className="profile-field">
-            <strong>Email:</strong>
-            {isEditing ? (
-              <input
-                type="email"
-                name="email"
-                value={profile.email}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.email}</span>
-            )}
-          </div>
-          <div className="profile-field">
-            <strong>Phone:</strong>
-            {isEditing ? (
-              <input
-                type="text"
-                name="phone"
-                value={profile.phone}
-                onChange={handleChange}
-              />
-            ) : (
-              <span>{profile.phone}</span>
-            )}
-          </div>
-          {user.role !== 'OWNER' && (
-            <>
-              <div className="profile-field">
-                <strong>Wallet Amount:</strong>
-                <span>₹{profile.walletAmount.toFixed(2)}</span>
-              </div>
-              <div className="recharge-wallet">
+        <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
+        {profile && (
+          <div className="profile-details">
+            <div className="profile-field">
+              <strong>Name:</strong>
+              {isEditing ? (
                 <input
-                  type="number"
-                  value={rechargeAmount}
-                  onChange={(e) => setRechargeAmount(e.target.value)}
-                  placeholder="Enter amount"
+                  type="text"
+                  name="name"
+                  value={profile.name}
+                  onChange={handleChange}
                 />
-                <button className="recharge-button" onClick={handleRechargeWallet}>
-                  Recharge Wallet
-                </button>
-              </div>
-            </>
-          )}
-          <button className="edit-button" onClick={handleEditToggle}>
-            {isEditing ? 'Save Changes' : 'Update Profile'}
-          </button>
-        </div>
-      )}
-    </div>
+              ) : (
+                <span>{profile.name}</span>
+              )}
+            </div>
+            <div className="profile-field">
+              <strong>Email:</strong>
+              {isEditing ? (
+                <input
+                  type="email"
+                  name="email"
+                  value={profile.email}
+                  onChange={handleChange}
+                />
+              ) : (
+                <span>{profile.email}</span>
+              )}
+            </div>
+            <div className="profile-field">
+              <strong>Phone:</strong>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="phone"
+                  value={profile.phone}
+                  onChange={handleChange}
+                />
+              ) : (
+                <span>{profile.phone}</span>
+              )}
+            </div>
+            {user.role !== 'OWNER' && (
+              <>
+                <div className="profile-field">
+                  <strong>Wallet Amount:</strong>
+                  <span>₹{profile.walletAmount.toFixed(2)}</span>
+                </div>
+                <div className="recharge-wallet">
+                  <input
+                    type="number"
+                    value={rechargeAmount}
+                    onChange={(e) => setRechargeAmount(e.target.value)}
+                    placeholder="Enter amount"
+                  />
+                  <button className="recharge-button" onClick={handleRechargeWallet}>
+                    Recharge Wallet
+                  </button>
+                </div>
+              </>
+            )}
+            <button className="edit-button" onClick={handleEditToggle}>
+              {isEditing ? 'Save Changes' : 'Update Profile'}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
