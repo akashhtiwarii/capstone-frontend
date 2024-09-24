@@ -1,0 +1,50 @@
+.contact-support-popup {
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+  }
+  
+  .contact-support-popup h2 {
+    margin-bottom: 15px;
+  }
+  
+  .contact-support-popup label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .contact-support-popup input,
+  .contact-support-popup textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #2c3e50;
+    background-color: #f9f9f9;
+  }
+  
+  .contact-support-popup button {
+    margin-right: 10px;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .contact-support-popup button:disabled {
+    background-color: #aaa;
+  }
+  
+  .contact-support-popup button:hover:not(:disabled) {
+    background-color: #0056b3;
+  }

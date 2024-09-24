@@ -1,0 +1,81 @@
+.profile-page {
+  padding: 30px;
+  background-color: #f0f4f8;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-details {
+  max-width: 500px;
+  width: 100%;
+  padding: 20px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profile-details h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.profile-field {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.profile-field strong {
+  display: inline-block;
+  width: 100px;
+  color: #666;
+}
+
+.profile-field input {
+  padding: 5px;
+  width: calc(100% - 120px);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.edit-button {
+  padding: 10px 20px;
+  margin-top: 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+
+.recharge-wallet {
+  margin-top: 15px;
+}
+
+.recharge-wallet input {
+  margin-right: 10px;
+  padding: 5px;
+  width: 150px;
+}
+
+.recharge-button {
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.recharge-button:hover {
+  background-color: #45a049;
+}

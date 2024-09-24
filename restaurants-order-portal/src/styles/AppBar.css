@@ -1,0 +1,41 @@
+  .app-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .app-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2c3e50;
+    padding: 10px 20px;
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .app-title {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .app-button {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .app-button:hover {
+    background-color: #bdc3c7;
+  }
+  
+  .user-name {
+    margin-right: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
