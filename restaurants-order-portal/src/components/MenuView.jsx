@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/MenuView.css';
-import { getFoodItemsByRestaurant } from '../services/apiService';
-import { getCategoriesByRestaurant } from '../services/apiService';
+import { getFoodItemsByRestaurant, getCategoriesByRestaurant } from '../services/apiService';
+import Popup from './Popup';
 
 const MenuView = ({ restaurantId }) => {
   const [categories, setCategories] = useState([]);
   const [foodItems, setFoodItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const fetchMenuData = async () => {
@@ -18,7 +19,7 @@ const MenuView = ({ restaurantId }) => {
         setCategories(categoryData);
         setFoodItems(foodData);
       } catch (err) {
-        console.error('Failed to fetch menu data:', err);
+        setErrorMessage('There was an error loading the menu. Please try again later.');
         setError(true);
       } finally {
         setLoading(false);
@@ -28,12 +29,13 @@ const MenuView = ({ restaurantId }) => {
     fetchMenuData();
   }, [restaurantId]);
 
+  const handleClosePopup = () => {
+    setError(false);
+    setErrorMessage('');
+  };
+
   if (loading) {
     return <p>Loading menu...</p>;
-  }
-
-  if (error) {
-    return <p>There was an error loading the menu.</p>;
   }
 
   return (
@@ -48,7 +50,7 @@ const MenuView = ({ restaurantId }) => {
                 <li key={food.foodId} className="food-item">
                   <h3>{food.name}</h3>
                   <p>{food.description}</p>
-                  <p>Price: ${food.price}</p>
+                  <p>Price: ₹{food.price}</p>
                   {food.image ? (
                     <img
                       src={`data:image/jpeg;base64,${food.image}`}
@@ -67,6 +69,7 @@ const MenuView = ({ restaurantId }) => {
           </ul>
         </div>
       ))}
+      {error && <Popup message={errorMessage} onClose={handleClosePopup} />}
     </div>
   );
 };

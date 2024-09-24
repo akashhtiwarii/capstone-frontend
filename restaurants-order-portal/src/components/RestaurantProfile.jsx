@@ -18,7 +18,6 @@ const RestaurantProfile = ({ setRestaurant }) => {
         const response = await getRestaurantDetails(restaurantId); 
         setRestaurantState(response);
       } catch (err) {
-        console.error('Failed to fetch restaurant details:', err);
         setPopupMessage('Failed to fetch restaurant details');
       }
     };

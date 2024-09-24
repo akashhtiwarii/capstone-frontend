@@ -30,7 +30,6 @@ const MenuPage = () => {
         setCategories(categoryData);
         setFoodItems(foodData);
       } catch (err) {
-        console.error('Failed to fetch menu data:', err);
         setPopupMessage("Menu Not Available");
         setError(true);
       } finally {
@@ -67,7 +66,6 @@ const MenuPage = () => {
         setPopupMessage(response.data.message || 'Failed to add item to cart.');
       }
     } catch (error) {
-      console.error('Error adding item to cart:', error);
       setPopupMessage(error.response?.data?.message || 'Failed to add item to cart.');
     }
   };
