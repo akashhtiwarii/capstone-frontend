@@ -19,7 +19,7 @@ const MenuView = ({ restaurantId }) => {
         setCategories(categoryData);
         setFoodItems(foodData);
       } catch (err) {
-        setErrorMessage('There was an error loading the menu. Please try again later.');
+        setErrorMessage('Menu Empty');
         setError(true);
       } finally {
         setLoading(false);
