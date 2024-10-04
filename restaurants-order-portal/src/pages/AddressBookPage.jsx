@@ -172,7 +172,7 @@ const AddressBookPage = () => {
           <div className="form-container">
             <form onSubmit={handleSubmit}>
               <label>
-                Address:
+                Address:<span style={{ color: 'red' }}>*</span>
                 <input
                   type="text"
                   name="address"
@@ -182,7 +182,7 @@ const AddressBookPage = () => {
                 />
               </label>
               <label>
-                City:
+                City:<span style={{ color: 'red' }}>*</span>
                 <input
                   type="text"
                   name="city"
@@ -192,7 +192,7 @@ const AddressBookPage = () => {
                 />
               </label>
               <label>
-                State:
+                State:<span style={{ color: 'red' }}>*</span>
                 <select
                   name="state"
                   value={formData.state}
@@ -208,7 +208,7 @@ const AddressBookPage = () => {
                 </select>
               </label>
               <label>
-                Pincode:
+                Pincode:<span style={{ color: 'red' }}>*</span>
                 <input
                   type="number"
                   name="pincode"

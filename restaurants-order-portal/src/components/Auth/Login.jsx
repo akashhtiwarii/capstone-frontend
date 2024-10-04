@@ -25,7 +25,7 @@ const Login = ({ onLogin }) => {
             navigate('/');
           }
         } catch (e) {
-          console.error('Failed to parse user from localStorage:', e);
+          setPopupMessage('Failed to parse user from localStorage:', e);
         }
       }
     };
@@ -69,7 +69,6 @@ const Login = ({ onLogin }) => {
         const { message } = error.response.data;
         setPopupMessage(message || 'Login failed! Please try again.');
       } else {
-        console.error('Login error:', error);
         setPopupMessage('Login failed! Please check your connection.');
       }
     }
@@ -102,14 +101,14 @@ const Login = ({ onLogin }) => {
       <h2>Login</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput 
-          label="Email" 
+          label={<span>Email <span style={{ color: 'red' }}>*</span></span>} 
           type="email" 
           register={register} 
           name="email" 
           errors={errors} 
         />
         <FormInput 
-          label="Password" 
+          label={<span>Password <span style={{ color: 'red' }}>*</span></span>} 
           type="password" 
           register={register} 
           name="password" 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Popup from './Popup';
-import { updateRestaurant } from '../services/apiService';
-import { getRestaurantDetails } from '../services/apiService';
+import { updateRestaurant, getRestaurantDetails } from '../services/apiService';
 import { useLocation } from 'react-router-dom';
 
 const RestaurantProfile = ({ setRestaurant }) => {
@@ -103,7 +102,7 @@ const RestaurantProfile = ({ setRestaurant }) => {
       )}
       <div className="restaurant-info">
         <label>
-          <strong>Name:</strong>
+          <strong>Name{isEditing && <span className="required">*</span>}:</strong>
           {isEditing ? (
             <input
               type="text"
@@ -116,7 +115,7 @@ const RestaurantProfile = ({ setRestaurant }) => {
           )}
         </label>
         <label>
-          <strong>Email:</strong>
+          <strong>Email{isEditing && <span className="required">*</span>}:</strong>
           {isEditing ? (
             <input
               type="email"
@@ -129,7 +128,7 @@ const RestaurantProfile = ({ setRestaurant }) => {
           )}
         </label>
         <label>
-          <strong>Phone:</strong>
+          <strong>Phone{isEditing && <span className="required">*</span>}:</strong>
           {isEditing ? (
             <input
               type="tel"
@@ -142,7 +141,7 @@ const RestaurantProfile = ({ setRestaurant }) => {
           )}
         </label>
         <label>
-          <strong>Address:</strong>
+          <strong>Address{isEditing && <span className="required">*</span>}:</strong>
           {isEditing ? (
             <input
               type="text"

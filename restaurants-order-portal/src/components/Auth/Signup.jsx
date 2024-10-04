@@ -45,12 +45,12 @@ const Signup = ({ onSignup }) => {
     <div className="form-container">
       <h2>Sign Up</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FormInput label="Name" type="text" register={register} name="name" errors={errors} />
-        <FormInput label="Email" type="email" register={register} name="email" errors={errors} />
-        <FormInput label="Password" type="password" register={register} name="password" errors={errors} />
-        <FormInput label="Confirm Password" type="password" register={register} name="confirmPassword" errors={errors} />
+        <FormInput label={<span>Name <span style={{ color: 'red' }}>*</span></span>} type="text" register={register} name="name" errors={errors} />
+        <FormInput label={<span>Email <span style={{ color: 'red' }}>*</span></span>} type="email" register={register} name="email" errors={errors} />
+        <FormInput label={<span>Password <span style={{ color: 'red' }}>*</span></span>} type="password" register={register} name="password" errors={errors} />
+        <FormInput label={<span>Confirm Password <span style={{ color: 'red' }}>*</span></span>} type="password" register={register} name="confirmPassword" errors={errors} />
         <FormSelect
-          label="Role"
+          label={<span>Role <span style={{ color: 'red' }}>*</span></span>}
           options={[
             { value: 'USER', label: 'User' },
             { value: 'OWNER', label: 'Owner' },
@@ -59,7 +59,7 @@ const Signup = ({ onSignup }) => {
           name="role"
           errors={errors}
         />
-        <FormInput label="Phone" type="text" register={register} name="phone" errors={errors} />
+        <FormInput label={<span>Phone <span style={{ color: 'red' }}>*</span></span>} type="text" register={register} name="phone" errors={errors} />
         <button type="submit" className="btn btn-primary">Sign Up</button>
       </form>
       <button 

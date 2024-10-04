@@ -19,26 +19,26 @@ const AddRestaurantPage = () => {
       });
       return;
     }
-  
+
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
       setPopupMessage('User is not logged in');
       return;
     }
-  
+
     const parsedUser = JSON.parse(storedUser);
-  
+
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('email', data.email);
     formData.append('phone', data.phone);
     formData.append('address', data.address);
     formData.append('ownerId', parsedUser.userId);
-  
+
     if (data.image[0]) {
       formData.append('image', data.image[0]);
     }
-  
+
     try {
       const response = await addRestaurant(formData);
       setPopupMessage(response.message);
@@ -61,7 +61,6 @@ const AddRestaurantPage = () => {
       }
     }
   };
-  
 
   return (
     <div className="add-restaurant-page">
@@ -77,22 +76,22 @@ const AddRestaurantPage = () => {
         <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
         <form onSubmit={handleSubmit(onSubmit)} className="add-restaurant-form">
           <label>
-            Name:
+            Name:<span className="required">*</span>
             <input type="text" {...register('name', { required: 'Name is required' })} />
             {errors.name && <p className="error-message">{errors.name.message}</p>}
           </label>
           <label>
-            Email:
+            Email:<span className="required">*</span>
             <input type="email" {...register('email', { required: 'Email is required' })} />
             {errors.email && <p className="error-message">{errors.email.message}</p>}
           </label>
           <label>
-            Phone:
+            Phone:<span className="required">*</span>
             <input type="text" {...register('phone', { required: 'Phone is required' })} />
             {errors.phone && <p className="error-message">{errors.phone.message}</p>}
           </label>
           <label>
-            Address:
+            Address:<span className="required">*</span>
             <input type="text" {...register('address', { required: 'Address is required' })} />
             {errors.address && <p className="error-message">{errors.address.message}</p>}
           </label>
