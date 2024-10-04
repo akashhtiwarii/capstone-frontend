@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const USER_API_URL = 'http://localhost:8081/user';
-const RESTAURANT_API_URL = 'http://localhost:8080';
-const ORDER_API_URL = 'http://localhost:8082';
+const RESTAURANT_API_URL = 'http://localhost:8080/restaurant';
+const ORDER_API_URL = 'http://localhost:8082/order';
 
 
 export const registerUser = async (userData) => {
@@ -41,7 +41,7 @@ export const deleteAddress = async (userId, addressId) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response?.data || error;
+    throw error;
   }
 };
 
@@ -50,7 +50,7 @@ export const updateAddress = async (addressData) => {
     const response = await axios.put(`${USER_API_URL}/address/update`, addressData);
     return response.data;
   } catch (error) {
-    throw error.response?.data || error;
+    throw error;
   }
 };
 
@@ -59,7 +59,7 @@ export const addAddress = async (addressData) => {
     const response = await axios.post(`${USER_API_URL}/address/add`, addressData);
     return response.data;
   } catch (err) {
-    throw err.response?.data || err;
+    throw err;
   }
 };
 
@@ -77,7 +77,7 @@ export const rechargeWallet = async (userId, amount) => {
 
 export const getUserProfile = async (userId) => {
   try {
-    const response = await axios.get(`http://localhost:8081/user/profile`, {
+    const response = await axios.get(`${USER_API_URL}/profile`, {
     params: { userId }
   });
   return response.data;
@@ -99,7 +99,7 @@ export const updateUserProfile = async (userId, profileData) => {
 
 export const getRestaurantsByOwner = async (ownerId) => {
   try {
-    const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/owner`, {
+    const response = await axios.get(`${RESTAURANT_API_URL}/owner`, {
       params: { ownerId }
     });
     return response.data;
@@ -110,7 +110,7 @@ export const getRestaurantsByOwner = async (ownerId) => {
 
 export const getAllRestaurants = async () => {
   try {
-    const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/all`);
+    const response = await axios.get(`${RESTAURANT_API_URL}/all`);
     return response.data;
   } catch (err) {
     throw err;
@@ -119,7 +119,7 @@ export const getAllRestaurants = async () => {
 
 export const getCategoriesByRestaurant = async (restaurantId) => {
   try {
-    const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/categories/${restaurantId}`);
+    const response = await axios.get(`${RESTAURANT_API_URL}/categories/${restaurantId}`);
     return response.data;
   } catch (err) {
     throw err;
@@ -128,7 +128,7 @@ export const getCategoriesByRestaurant = async (restaurantId) => {
 
 export const getFoodItemsByRestaurant = async (restaurantId) => {
   try {
-    const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/restaurantfood/${restaurantId}`);
+    const response = await axios.get(`${RESTAURANT_API_URL}/restaurantfood/${restaurantId}`);
     return response.data;
   } catch (err) {
     throw err;
@@ -137,7 +137,7 @@ export const getFoodItemsByRestaurant = async (restaurantId) => {
 
 export const getRestaurantDetails = async (restaurantId) => {
   try {
-    const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/${restaurantId}`);
+    const response = await axios.get(`${RESTAURANT_API_URL}/${restaurantId}`);
     return response.data;
   } catch (err) {
     throw err;
@@ -146,7 +146,7 @@ export const getRestaurantDetails = async (restaurantId) => {
 
 export const addRestaurant = async (formData) => {
   try {
-    const response = await axios.post(`${RESTAURANT_API_URL}/restaurant/add`, formData, {
+    const response = await axios.post(`${RESTAURANT_API_URL}/add`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -158,34 +158,34 @@ export const addRestaurant = async (formData) => {
 };
 
 export const getCategories = async (restaurantId) => {
-  const response = await axios.get(`http://localhost:8080/restaurant/categories/${restaurantId}`);
+  const response = await axios.get(`${RESTAURANT_API_URL}/categories/${restaurantId}`);
   return response.data;
 };
 
 export const addCategory = async (category) => {
-  const response = await axios.post('http://localhost:8080/restaurant/categories/add', category);
+  const response = await axios.post(`${RESTAURANT_API_URL}/categories/add`, category);
   return response.data;
 };
 
 export const updateCategory = async (categoryId, category) => {
-  const response = await axios.put(`http://localhost:8080/restaurant/categories/update/${categoryId}`, category);
+  const response = await axios.put(`${RESTAURANT_API_URL}/categories/update/${categoryId}`, category);
   return response.data;
 };
 
 export const deleteCategory = async (categoryId) => {
-  const response = await axios.delete(`http://localhost:8080/restaurant/categories/delete/${categoryId}`);
+  const response = await axios.delete(`${RESTAURANT_API_URL}/categories/delete/${categoryId}`);
   return response.data;
 };
 
 export const getFoodItems = async (restaurantId) => {
-  const response = await axios.get(`${RESTAURANT_API_URL}/restaurant/restaurantfood/${restaurantId}`);
+  const response = await axios.get(`${RESTAURANT_API_URL}/restaurantfood/${restaurantId}`);
   return response.data;
 };
 
 
 export const addFoodItem = async (formData) => {
   try {
-    const response = await axios.post('http://localhost:8080/restaurant/food/add', formData, {
+    const response = await axios.post(`${RESTAURANT_API_URL}/food/add`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -198,7 +198,7 @@ export const addFoodItem = async (formData) => {
 
 export const updateFoodItem = async (foodId, formData) => {
   try {
-    const response = await axios.put(`${RESTAURANT_API_URL}/restaurant/food/update/${foodId}`, formData);
+    const response = await axios.put(`${RESTAURANT_API_URL}/food/update/${foodId}`, formData);
     return response.data;
   } catch (err) {
     throw err;
@@ -207,7 +207,7 @@ export const updateFoodItem = async (foodId, formData) => {
 
 export const deleteFoodItem = async (userId, foodId) => {
   try {
-    const response = await axios.delete(`${RESTAURANT_API_URL}/restaurant/food/delete`,{
+    const response = await axios.delete(`${RESTAURANT_API_URL}/food/delete`,{
       params: {userId, foodId}
     });
     return response.data;
@@ -218,7 +218,7 @@ export const deleteFoodItem = async (userId, foodId) => {
 
 export const getRestaurantOrders = async (restaurantId) => {
   try {
-    const response = await axios.get(`http://localhost:8082/order/restaurantId`, {
+    const response = await axios.get(`${ORDER_API_URL}/restaurantId`, {
       params: {restaurantId}
     });
     return response.data;
@@ -229,7 +229,7 @@ export const getRestaurantOrders = async (restaurantId) => {
 
 export const getCartItems = async (userId) => {
   try {
-    const response = await axios.get(`${ORDER_API_URL}/order/mycart`, {
+    const response = await axios.get(`${ORDER_API_URL}/mycart`, {
       params: { userId },
     });
     return response.data;
@@ -242,7 +242,7 @@ export const getCartItems = async (userId) => {
 };
 
 export const getUserOrders = async (userId) => {
-  const response = await axios.get(`http://localhost:8082/order/user/orders`, {
+  const response = await axios.get(`${ORDER_API_URL}/user/orders`, {
     params: { userId },
   });
   return response.data;
@@ -250,7 +250,7 @@ export const getUserOrders = async (userId) => {
 
 export const deleteCartItemById = async (cartItemId) => {
   try {
-    const response = await axios.delete(`http://localhost:8082/order/cart/delete`, {
+    const response = await axios.delete(`${ORDER_API_URL}/cart/delete`, {
       params: { cartItemId },
     });
     return response.data;
@@ -264,7 +264,7 @@ export const updateCartItemQuantity = async (cartItemId, delta) => {
   try {
     console.log(cartItemId);
     console.log(delta)
-    const response = await axios.put(`http://localhost:8082/order/cart/update`, null, {
+    const response = await axios.put(`${ORDER_API_URL}/cart/update`, null, {
       params: { cartItemId, delta },
     });
     return response.data;
@@ -275,7 +275,7 @@ export const updateCartItemQuantity = async (cartItemId, delta) => {
 
 export const placeOrder = async (userId, addressId) => {
   try {
-    const response = await axios.post(`${ORDER_API_URL}/order/add`, null, {
+    const response = await axios.post(`${ORDER_API_URL}/add`, null, {
       params: { userId, addressId },
     });
     return response.data;
@@ -290,7 +290,7 @@ export const placeOrder = async (userId, addressId) => {
 
 export const cancelOrder = async (orderId) => {
   try {
-    const response = await axios.put(`${ORDER_API_URL}/order/cancel`, null, {
+    const response = await axios.put(`${ORDER_API_URL}/cancel`, null, {
       params: { orderId },
     });
     return response.data;
@@ -303,7 +303,7 @@ export const updateOrderStatus = async ({ ownerId, orderId, status }) => {
   console.log(orderId)
   console.log(ownerId)
   console.log(status)
-  const response = await axios.put('http://localhost:8082/order/update', null, {
+  const response = await axios.put(`${ORDER_API_URL}/update`, null, {
     params: { ownerId, orderId, status },
   });
   return response.data;
@@ -311,7 +311,7 @@ export const updateOrderStatus = async ({ ownerId, orderId, status }) => {
 
 export const updateRestaurant = async (formData) => {
   try {
-    const response = await axios.put(`${RESTAURANT_API_URL}/restaurant/update`, formData, {
+    const response = await axios.put(`${RESTAURANT_API_URL}/update`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -324,7 +324,7 @@ export const updateRestaurant = async (formData) => {
 
 export const contactSupport = async ({ restaurantEmail, subject, message, fromEmail }) => {
   try {
-    const response = await axios.post('http://localhost:8081/user/contact-us', {
+    const response = await axios.post(`${USER_API_URL}/contact-us`, {
       fromEmail,
       subject,
       message

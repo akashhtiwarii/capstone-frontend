@@ -5,6 +5,13 @@ import '../styles/AddressBookPage.css';
 import { useNavigate } from 'react-router-dom';
 import AppBar from '../components/AppBar';
 
+const statesOfIndia = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 
+  'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 
+  'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 
+  'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+];
+
 const AddressBookPage = () => {
   const [addresses, setAddresses] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -20,10 +27,8 @@ const AddressBookPage = () => {
   });
 
   const navigate = useNavigate();
-
   const user = JSON.parse(localStorage.getItem('user'));
 
-  
   const fetchAddresses = async () => {
     if (!user) {
       setErrorMessage('User not found.');
@@ -33,22 +38,34 @@ const AddressBookPage = () => {
     try {
       const data = await getAddressList(user.userId);
       setAddresses(data);
-    } catch (error) {
-      setErrorMessage(error.message || 'Failed to load addresses.');
+    } catch (err) {
+      const errorData = err.response?.data || {};
+      if (typeof errorData === 'object') {
+        const errorMessages = Object.values(errorData).join(', ');
+        setErrorMessage(`${errorMessages}`);
+      } else {
+        setErrorMessage('Failed to load address');
+      }
     }
   };
 
   useEffect(() => {
     fetchAddresses();
-  }, [user?.userId]); 
+  }, [user?.userId]);
 
   const handleDelete = async (addressId) => {
     try {
       await deleteAddress(user.userId, addressId);
       setAddresses(addresses.filter((address) => address.addressId !== addressId));
       setSuccessMessage('Address deleted successfully');
-    } catch (error) {
-      setErrorMessage(error.message || 'Failed to delete address.');
+    } catch (err) {
+      const errorData = err.response?.data || {};
+      if (typeof errorData === 'object') {
+        const errorMessages = Object.values(errorData).join(', ');
+        setErrorMessage(`${errorMessages}`);
+      } else {
+        setErrorMessage('Failed to delete address');
+      }
     }
   };
 
@@ -111,8 +128,14 @@ const AddressBookPage = () => {
 
       setShowForm(false);
       await fetchAddresses(); 
-    } catch (error) {
-      setErrorMessage(error.response || 'Failed to save address.');
+    } catch (err) {
+      const errorData = err.response?.data || {};
+      if (typeof errorData === 'object') {
+        const errorMessages = Object.values(errorData).join(', ');
+        setErrorMessage(`${errorMessages}`);
+      } else {
+        setErrorMessage('Failed to add address');
+      }
     }
   };
 
@@ -130,73 +153,81 @@ const AddressBookPage = () => {
     <div className="addresses-book-page">
       <AppBar user={user} handleLogout={handleLogout} />
       <div className="address-book-page">
-      <h2>Your Address Book</h2>
-      <button className="add-address-button" onClick={handleAddClick}>Add Address</button>
-      {addresses.length > 0 ? (
-        <ul className="address-list">
-          {addresses.map((address) => (
-            <li key={address.addressId} className="address-item">
-              <p>{`${address.address}, ${address.city}, ${address.state} - ${address.pincode}`}</p>
-              <button className="update-button" onClick={() => handleUpdateClick(address)}>Update</button>
-              <button className="delete-button" onClick={() => handleDelete(address.addressId)}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No addresses found.</p>
-      )}
-      {showForm && (
-        <div className="form-container">
-          <form onSubmit={handleSubmit}>
-            <label>
-              Address:
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleFormChange}
-                required
-              />
-            </label>
-            <label>
-              City:
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleFormChange}
-                required
-              />
-            </label>
-            <label>
-              State:
-              <input
-                type="text"
-                name="state"
-                value={formData.state}
-                onChange={handleFormChange}
-                required
-              />
-            </label>
-            <label>
-              Pincode:
-              <input
-                type="number"
-                name="pincode"
-                value={formData.pincode}
-                onChange={handleFormChange}
-                required
-              />
-            </label>
-            <button type="submit" className="submit-button">{isUpdating ? 'Update Address' : 'Add Address'}</button>
-            <button type="button" className="cancel-button" onClick={() => setShowForm(false)}>Cancel</button>
-          </form>
-        </div>
-      )}
-      {(errorMessage || successMessage) && (
-        <Popup message={errorMessage || successMessage} onClose={handleClosePopup} />
-      )}
-    </div>
+        <h2>Your Address Book</h2>
+        <button className="add-address-button" onClick={handleAddClick}>Add Address</button>
+        {addresses.length > 0 ? (
+          <ul className="address-list">
+            {addresses.map((address) => (
+              <li key={address.addressId} className="address-item">
+                <p>{`${address.address}, ${address.city}, ${address.state} - ${address.pincode}`}</p>
+                <button className="update-button" onClick={() => handleUpdateClick(address)}>Update</button>
+                <button className="delete-button" onClick={() => handleDelete(address.addressId)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No addresses found.</p>
+        )}
+        {showForm && (
+          <div className="form-container">
+            <form onSubmit={handleSubmit}>
+              <label>
+                Address:
+                <input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleFormChange}
+                  required
+                />
+              </label>
+              <label>
+                City:
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleFormChange}
+                  required
+                />
+              </label>
+              <label>
+                State:
+                <select
+                  name="state"
+                  value={formData.state}
+                  onChange={handleFormChange}
+                  required
+                >
+                  <option value="">Select State</option>
+                  {statesOfIndia.map((state) => (
+                    <option key={state} value={state}>
+                      {state}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Pincode:
+                <input
+                  type="number"
+                  name="pincode"
+                  value={formData.pincode}
+                  onChange={handleFormChange}
+                  required
+                />
+              </label>
+              <button type="submit" className="submit-button">
+                {isUpdating ? 'Update Address' : 'Add Address'}
+              </button>
+              <button type="button" className="cancel-button" onClick={() => setShowForm(false)}>Cancel</button>
+            </form>
+          </div>
+        )}
+        {(errorMessage || successMessage) && (
+          <Popup message={errorMessage || successMessage} onClose={handleClosePopup} />
+        )}
+      </div>
     </div>
   );
 };
